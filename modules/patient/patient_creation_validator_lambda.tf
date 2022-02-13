@@ -53,7 +53,10 @@ data "aws_iam_policy_document" "the_patient_creation_validator_lambda_execution_
       "lambda:*"
     ]
 
-    resources = ["arn:aws:logs:*"]
+    resources = [
+      "arn:aws:logs:*",
+      "arn:aws:lambda:*"
+    ]
   }
 }
 
