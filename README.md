@@ -6,4 +6,4 @@ The project will use APIGateway to create the endpoints where requests will be s
 <h1>Tentative Architecture</h1>
 The following draw.io diagram contains the initial architecture diagram for patients. The diagram will be updated to include doctors and appointments once patients are complete.
 
-![Diagram](http://jgraph.github.io/drawio-github/diagram.png)
+![Diagram](https://app.diagrams.net/)
