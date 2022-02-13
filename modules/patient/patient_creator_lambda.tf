@@ -25,7 +25,7 @@ resource "aws_cloudwatch_log_group" "the_patient_creator_lambda_cloudwatch_group
 resource "aws_iam_role" "the_patient_creator_lambda_role" {
   name               = "${local.patient_creator_lambda_name}_lambda_role"
   path               = "/"
-  assume_role_policy = data.aws_iam_policy_document.the_lambda_assume_role_policy_document.json
+  assume_role_policy = data.aws_iam_policy_document.the_patient_creator_lambda_assume_role_policy_document.json
 }
 
 # This policy defines the basic CloudWatch log permissions that every lambda needs to execute
@@ -56,7 +56,7 @@ data "aws_iam_policy_document" "the_patient_creator_lambda_execution_policy_docu
   }
 }
 
-data "aws_iam_policy_document" "the_lambda_assume_role_policy_document" {
+data "aws_iam_policy_document" "the_patient_creator_lambda_assume_role_policy_document" {
   version = "2012-10-17"
 
   statement {
