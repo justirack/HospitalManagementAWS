@@ -62,7 +62,7 @@ data "aws_iam_policy_document" "the_patient_creation_validator_lambda_assume_rol
 
   statement {
     effect  = "Allow"
-    actions = ["sts:AssumeRole"]
+    actions = ["sts:AssumeRole", "lambda:*"]
 
     principals {
       type        = "Service"
