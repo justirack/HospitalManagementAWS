@@ -12,6 +12,12 @@ resource "aws_lambda_function" "the_patient_creation_validator_lambda_function" 
   source_code_hash = data.archive_file.the_patient_creation_validator_lambda_zip.output_base64sha256
   publish          = true
 
+  environment {
+    variables = {
+      PATIENT_CREATOR_LAMBDA_ARN = aws_lambda_function.the_patient_creator_lambda_function.arn
+    }
+  }
+
   depends_on = [aws_cloudwatch_log_group.the_patient_creation_validator_lambda_cloudwatch_group]
 }
 
