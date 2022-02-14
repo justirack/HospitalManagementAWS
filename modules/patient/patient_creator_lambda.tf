@@ -1,7 +1,7 @@
 # This file contains the infrastructure to support the patient_creator lambda
 
 # -----------------------------------------------
-# Module Data
+# Module Resources
 resource "aws_lambda_function" "the_patient_creator_lambda_function" {
   function_name    = local.patient_creator_lambda_name
   handler          = "${local.patient_creator_lambda_name}.lambda_handler"

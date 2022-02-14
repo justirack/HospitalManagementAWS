@@ -1,7 +1,7 @@
 # This file contains the infrastructure to support the patient_creation_validator lambda
 
 # -----------------------------------------------
-# Module Data
+# Module Resources
 resource "aws_lambda_function" "the_patient_creation_validator_lambda_function" {
   function_name    = local.patient_creation_validator_lambda_name
   handler          = "${local.patient_creation_validator_lambda_name}.lambda_handler"
