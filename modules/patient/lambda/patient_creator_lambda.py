@@ -16,12 +16,10 @@ def lambda_handler(event, context):
     response = dynamodb.put_item(
         TableName=__DYNAMO_DB_TABLE_NAME,
         Item={
-            'patient_id': '345654',
-            'sort_key': 'movie',
-            'info': {
-                'plot': "plot",
-                'rating': "rating"
-            }
+            "patient_id": {'S': '192636'},
+            'sort_key': {'S': 'JR020902'},
+            'firstName': {'S': 'Justin'},
+            'lastName': {'S': 'Rackley'}
         }
     )
 
