@@ -20,6 +20,6 @@ def lambda_handler(event, context):
         Payload=json.dumps(event['key1'])
     )
 
-    __logger.info("Recieved response: %s", response)
+    __logger.info("Received response: %s", response)
 
     return json.loads(json.dumps(response, default=str))
