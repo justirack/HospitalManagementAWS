@@ -1,7 +1,7 @@
 # This file contains the infrastructure to support the patient_creator lambda
 
 # -----------------------------------------------
-# Module Data
+# Module Resources
 resource "aws_lambda_function" "the_patient_creator_lambda_function" {
   function_name    = local.patient_creator_lambda_name
   handler          = "${local.patient_creator_lambda_name}.lambda_handler"
@@ -11,6 +11,12 @@ resource "aws_lambda_function" "the_patient_creator_lambda_function" {
   filename         = data.archive_file.the_patient_creator_lambda_zip.output_path
   source_code_hash = data.archive_file.the_patient_creator_lambda_zip.output_base64sha256
   publish          = true
+
+  environment {
+    variables = {
+      PATIENT_TABLE_NAME = aws_dynamodb_table.the_patient_table.name
+    }
+  }
 
   depends_on = [aws_cloudwatch_log_group.the_patient_creator_lambda_cloudwatch_group]
 }
@@ -49,10 +55,14 @@ data "aws_iam_policy_document" "the_patient_creator_lambda_execution_policy_docu
     effect = "Allow"
 
     actions = [
-      "logs:*"
+      "logs:*",
+      "dynamodb:*"
     ]
 
-    resources = ["arn:aws:logs:*"]
+    resources = [
+      "arn:aws:logs:*",
+      "arn:aws:dynamodb:*"
+    ]
   }
 }
 
