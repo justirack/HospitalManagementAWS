@@ -17,7 +17,7 @@ def lambda_handler(event, context):
     response = lambda_client.invoke(
         FunctionName=__PATIENT_CREATOR_LAMBDA_ARN,
         InvocationType="RequestResponse",
-        Payload=json.dumps(event['key1'])
+        Payload=json.dumps(event)
     )
 
     __logger.info("Received response: %s", response)
