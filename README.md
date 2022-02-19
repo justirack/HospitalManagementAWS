@@ -1,7 +1,8 @@
 # HospitalManagementAWS
 
-This project will re-create the project found in my HospitalManagement repository, link <a href="https://github.com/justirack/HospitalManagement">HERE</a>, but in aws.<br>
-The project will use APIGateway to create the endpoints where requests will be sent, and will be backed by lambda functions. Data will be stored in dynamoDB multiple dynamoDB tables, with one for patients, doctors and appointments respectively.
+This project will re-create the project found in my HospitalManagement repository but in aws.<br>
+See original project link <a href="https://github.com/justirack/HospitalManagement">here</a>
+The project will use APIGateway to create the endpoints where requests will be sent, and will be backed by lambda functions. Data will be stored in multiple dynamoDB tables, with one for each of patients, doctors and appointments respectively.
 
 # Tentative Architecture
 The following draw.io diagram contains the initial architecture diagram for patients. The diagram will be updated to include doctors and appointments once patients are complete.
