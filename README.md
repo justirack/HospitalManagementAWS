@@ -15,9 +15,9 @@ Link to diagrams <a href="https://viewer.diagrams.net/?tags=%7B%7D&highlight=000
     <br>
       <code>
         {
-          "first_name":"Justin",
-          "last_name":"Rackley",
-          "date_of_birth":"2002-02-09"
+          "first_name":"Justin",<br>
+          "last_name":"Rackley",<br>
+          "date_of_birth":"2002-02-09"<br>
         }
       </code>
     <br>
