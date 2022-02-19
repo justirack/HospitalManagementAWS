@@ -18,8 +18,9 @@ def lambda_handler(event, context):
         Item={
             "patient_id": {'S': '192636'},
             'sort_key': {'S': 'JR020902'},
-            'firstName': {'S': 'Justin'},
-            'lastName': {'S': 'Rackley'}
+            'firstName': {'S': event['first_name']},
+            'lastName': {'S': event['last_name']},
+            "DOB": {'S': event['date_of_birth']}
         }
     )
 
