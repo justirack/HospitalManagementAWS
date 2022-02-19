@@ -17,9 +17,15 @@ def lambda_handler(event, context):
     response = lambda_client.invoke(
         FunctionName=__PATIENT_CREATOR_LAMBDA_ARN,
         InvocationType="RequestResponse",
-        Payload=json.dumps(event)
+        Payload=json.dumps(event )
     )
 
     __logger.info("Received response: %s", response)
 
-    return json.loads(json.dumps(response, default=str))
+    return {
+           "statusCode": 200,
+           "headers": {
+               'Content-Type': 'text/html; charset=utf-8',
+           },
+           "body": "Hello world!"
+            }
