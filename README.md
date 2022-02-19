@@ -10,14 +10,12 @@ Link to diagrams <a href="https://viewer.diagrams.net/?tags=%7B%7D&highlight=000
 
 <h1>Endpoint Request Specifications<h1>
   <h2>patient/add</h2>
-  <p>
-  The add patient endpoint expects the patients first name, last name and date of birth in <code>yyyy-mm-dd</code> format. See sample json below.
-  </p>
+  The add patient endpoint expects the patients first name, last name and date of birth in <code>yyyy-mm-dd</code> format.<br> See sample json below:
   
   ``` json
   {
     "first_name":"Justin",
     "last_name":"Rackley",
-    "date_of_birth":2002-02-09"
+    "date_of_birth":"2002-02-09"
   }
   ```
