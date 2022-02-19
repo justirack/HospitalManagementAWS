@@ -75,7 +75,11 @@ data "aws_iam_policy_document" "the_patient_creation_validator_lambda_assume_rol
 
     principals {
       type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
+      identifiers = [
+        "lambda.amazonaws.com",
+        "apigateway.amazonaws.com"
+
+      ]
     }
   }
 }
