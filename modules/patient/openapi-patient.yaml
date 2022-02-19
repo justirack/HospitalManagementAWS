@@ -1,0 +1,26 @@
+openapi: 3.0.1
+info:
+  title: ${title}
+  description: ${description}
+  version: ${version}
+servers:
+  - url: ${invoke_url}
+paths:
+  ${add_path}:
+    post:
+      description: ${add_description}
+      responses:
+        "200":
+          description: "The patient was successfully added to the table"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri: ${patient_creation_validator_lambda_invoke_arn}
+        credentials: ${patient_creation_validator_lambda_invoke_role_arn}
