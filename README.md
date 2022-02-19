@@ -13,7 +13,7 @@ Link to diagrams <a href="https://viewer.diagrams.net/?tags=%7B%7D&highlight=000
   <p>
   The add patient endpoint expects the patients first name, last name and date of birth in <code>yyyy-mm-dd</code> format. See sample json below.
     <br>
-      <code>
+      <code display:block>
         {
           "first_name":"Justin",<br>
           "last_name":"Rackley",<br>
