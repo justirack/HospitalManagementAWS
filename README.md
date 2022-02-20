@@ -5,7 +5,7 @@ See original project link <a href="https://github.com/justirack/HospitalManageme
 The project will use APIGateway to create the endpoints where requests will be sent, and will be backed by lambda functions. Data will be stored in multiple dynamoDB tables, with one for each of patients, doctors and appointments respectively.
 
 # Tentative Architecture
-The following draw.io diagram contains the initial architecture diagram for patients. The diagram will be updated to include doctors and appointments once patients are complete.
+The following draw.io diagram contains the initial architecture diagram for patients and doctors. The diagram will be updated to include appointments once patients and doctorsare complete.
 
 ![Alt](images/Architecture.svg)
 
