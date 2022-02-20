@@ -12,25 +12,29 @@ __logger.setLevel(logging.INFO)
 
 __bad_request = {"statusCode": 400, "headers": {'Content-Type': 'text/html; charset=utf-8'}, "body": ""}
 
+
 def lambda_handler(event, context):
-    __logger.info("This lambda was invoked with event: %s", event)
+    __logger.info(f'This lambda was invoked with event: {event}')
 
     body = json.loads(event['body'])
 
     # Make sure all patient data is included in the request
     if "first_name" not in body:
+        __logger.info(f'The request does not contain a first name. Returning 400 status code.')
         __bad_request.update({
             "body": "The patient could not be added as first_name was not defined"
         })
         return __bad_request
 
     if "last_name" not in body:
+        __logger.info(f'The request does not contain a last name. Returning 400 status code.')
         __bad_request.update({
             "body": "The patient could not be added as last_name was not defined"
         })
         return __bad_request
 
     if "date_of_birth" not in body:
+        __logger.indo(f'The request does not contain a date of birth. Returning 400 status code.')
         __bad_request.update({
             "body": "The patient could not be added as date_of_birth was not defined"
         })
@@ -46,6 +50,7 @@ def lambda_handler(event, context):
     __logger.info(f'Received response: {response}')
 
     if response['StatusCode'] != 200:
+        __logger.info(f'Something went wrong adding the patient to the database. Returning 500 status code.')
         return {
             "statusCode": 500,
             "headers": {
@@ -54,6 +59,7 @@ def lambda_handler(event, context):
             "body": "Something went wrong adding the client to the database."
         }
 
+    __logger.info(f'The patient was successfully added to the database. Returning 200 status code.')
     return {
         "statusCode": 200,
         "headers": {
