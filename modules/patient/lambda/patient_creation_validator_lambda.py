@@ -55,9 +55,9 @@ def lambda_handler(event, context):
         }
 
     return {
-           "statusCode": 200,
-           "headers": {
-               'Content-Type': 'text/html; charset=utf-8',
-           },
-           "body": "The patient was successfully added to the database"
-            }
+        "statusCode": 200,
+        "headers": {
+            'Content-Type': 'text/html; charset=utf-8'
+        },
+        "body": "The patient was successfully added to the database",
+        "patient_id": response['patient_id']}
