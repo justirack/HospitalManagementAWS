@@ -56,12 +56,12 @@ data "aws_iam_policy_document" "the_patient_creator_lambda_execution_policy_docu
 
     actions = [
       "logs:*",
-      "dynamodb:*"
+      "dynamodb:PutItem"
     ]
 
     resources = [
       "arn:aws:logs:*",
-      "arn:aws:dynamodb:*"
+      "arn:aws:dynamodb:*:*:table:patients"
     ]
   }
 }
