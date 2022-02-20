@@ -33,4 +33,6 @@ def lambda_handler(event, context):
     })
     __logger.info("Received response: %s", response)
 
+    __logger.info(f'Returning {response}')
+
     return response
