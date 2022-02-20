@@ -43,7 +43,7 @@ def lambda_handler(event, context):
         Payload=json.dumps(body)
     )
 
-    __logger.info("Received response: %s", response)
+    __logger.info(f'Received response: {response}')
 
     if response['StatusCode'] != 200:
         return {
@@ -59,5 +59,5 @@ def lambda_handler(event, context):
         "headers": {
             'Content-Type': 'text/html; charset=utf-8'
         },
-        "body": "The patient was successfully added to the database",
-        "patient_id": response['patient_id']}
+        "body": "The patient was successfully added to the database"
+    }
