@@ -17,6 +17,7 @@ def lambda_handler(event, context):
     patient_id = str(uuid.uuid4())
     sort_key = event['first_name'][0] + event['last_name'][0] + event['date_of_birth']
 
+    __logger.info(f'Adding patient with sort key {sort_key} to the database')
     response = dynamodb.put_item(
         TableName=__DYNAMO_DB_TABLE_NAME,
         Item={
@@ -27,12 +28,17 @@ def lambda_handler(event, context):
             "date_of_birth": {'S': event['date_of_birth']}
         }
     )
+    __logger.info("Received response: %s", response)
 
+    # Return the dynamodb response if it was not successful
+    if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+        __logger.info(f'returning {response}')
+        return response
+
+    # Add the patient id to the response if the add was successful
     response.update({
         'patient_id': patient_id
     })
-    __logger.info("Received response: %s", response)
 
     __logger.info(f'Returning {response}')
-
     return response
