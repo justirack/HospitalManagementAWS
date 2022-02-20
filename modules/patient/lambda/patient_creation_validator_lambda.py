@@ -16,9 +16,20 @@ __bad_request = {"statusCode": 400, "headers": {'Content-Type': 'text/html; char
 def lambda_handler(event, context):
     __logger.info(f'This lambda was invoked with event: {event}')
 
+    # If no body exists return to avoid an error being thrown
+    if event['body'] is None:
+        __logger.info(
+            'The request does not contain a body. Please add a body that includes a first name,'
+            ' last name and date of birth. Returning 400 status code.')
+
+        __bad_request.update({
+            "body": "The request must contain a body, which must contain a first name, last name and date of birth."
+        })
+        return __bad_request
+
     body = json.loads(event['body'])
 
-    # Make sure all patient data is included in the request
+    # Make sure all patient data is included in the request, return if something is missing
     if "first_name" not in body:
         __logger.info(f'The request does not contain a first name. Returning 400 status code.')
         __bad_request.update({
@@ -49,6 +60,7 @@ def lambda_handler(event, context):
 
     __logger.info(f'Received response: {response}')
 
+    # If the status code is not 200 something went wrong, return a 500 status code
     if response['StatusCode'] != 200:
         __logger.info(f'Something went wrong adding the patient to the database. Returning 500 status code.')
         return {
