@@ -24,3 +24,21 @@ paths:
         httpMethod: POST
         uri: ${patient_creation_validator_lambda_invoke_arn}
         credentials: ${patient_creation_validator_lambda_invoke_role_arn}
+  ${retrieve_path}:
+    get:
+      description: ${retrieve_description}
+      responses:
+        "200":
+          description: "The patient was successfully retrieved from the table"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: GET
+        uri: ${patient_retrieval_validator_lambda_invoke_arn}
+        credentials: ${patient_retrieval_validator_lambda_invoke_role_arn}

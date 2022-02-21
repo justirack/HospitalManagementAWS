@@ -16,13 +16,13 @@ resource "aws_api_gateway_deployment" "the_patient_rest_api_deployment" {
     redeployment = sha1(jsonencode(aws_api_gateway_rest_api.the_patient_rest_api.body))
   }
 
-  lifecycle {create_before_destroy = true}
+  lifecycle { create_before_destroy = true }
 
   depends_on = [aws_api_gateway_rest_api.the_patient_rest_api]
 }
 
 resource "aws_api_gateway_gateway_response" "the_patient_rest_api_gateway_response" {
-  count = length(local.gateway_responses)
+  count         = length(local.gateway_responses)
   response_type = local.gateway_responses[count.index]
   rest_api_id   = aws_api_gateway_rest_api.the_patient_rest_api.id
 
@@ -54,12 +54,17 @@ resource "aws_api_gateway_stage" "the_patient_rest_api_stage" {
 
 resource "aws_iam_role_policy" "the_patient_creation_validator_invocation_role_policy" {
   role   = aws_iam_role.the_patient_creation_validator_lambda_role.id
-  policy = data.aws_iam_policy_document.the_patient_creation_validator_invocation_policy_document.json
+  policy = data.aws_iam_policy_document.the_patient_validator_invocation_policy_document.json
+}
+
+resource "aws_iam_role_policy" "the_patient_retrieval_validator_invocation_role_policy" {
+  role   = aws_iam_role.the_patient_retrieval_validator_lambda_role.id
+  policy = data.aws_iam_policy_document.the_patient_validator_invocation_policy_document.json
 }
 
 # -----------------------------------------------
 # Module Data
-data "aws_iam_policy_document" "the_patient_creation_validator_invocation_policy_document" {
+data "aws_iam_policy_document" "the_patient_validator_invocation_policy_document" {
   version = "2012-10-17"
 
   statement {
@@ -67,7 +72,10 @@ data "aws_iam_policy_document" "the_patient_creation_validator_invocation_policy
 
     actions = ["lambda:InvokeFunction"]
 
-    resources = [aws_lambda_function.the_patient_creation_validator_lambda_function.arn]
+    resources = [
+      aws_lambda_function.the_patient_creation_validator_lambda_function.arn,
+      aws_lambda_function.the_patient_retrieval_validator_lambda_function.arn
+    ]
   }
 }
 
@@ -75,16 +83,22 @@ data "template_file" "the_patient_open_api_specification_file" {
   template = file("${path.module}/${local.patient_open_api_yml_file}")
 
   vars = {
-    title = local.patient_api_title
+    title       = local.patient_api_title
     description = local.patient_api_description
-    version = local.patient_api_version
-    invoke_url = local.patient_api_invoke_url
+    version     = local.patient_api_version
+    invoke_url  = local.patient_api_invoke_url
 
-    add_path = local.patient_api_add_path
-    add_description = local.patient_api_add_description
-
-    patient_creation_validator_lambda_invoke_arn = aws_lambda_function.the_patient_creation_validator_lambda_function.invoke_arn
+    # Add endpoint variables
+    add_path                                          = local.patient_api_add_path
+    add_description                                   = local.patient_api_add_description
+    patient_creation_validator_lambda_invoke_arn      = aws_lambda_function.the_patient_creation_validator_lambda_function.invoke_arn
     patient_creation_validator_lambda_invoke_role_arn = aws_iam_role.the_patient_creation_validator_lambda_role.arn
+
+    # Retrieve endpoint variables
+    retrieve_path                                      = local.patient_api_retrieve_path
+    retrieve_description                               = local.patient_api_retrieve_description
+    patient_retrieval_validator_lambda_invoke_arn      = aws_lambda_function.the_patient_retrieval_validator_lambda_function.invoke_arn
+    patient_retrieval_validator_lambda_invoke_role_arn = aws_iam_role.the_patient_retrieval_validator_lambda_role.arn
   }
 }
 
@@ -92,17 +106,21 @@ data "template_file" "the_patient_open_api_specification_file" {
 # Module Locals
 locals {
   patient_open_api_yml_file = "openapi-patient.yaml"
-  patient_api_cors_domain = "*"
+  patient_api_cors_domain   = "*"
 
   # General api variables
-  patient_api_title = "patient"
+  patient_api_title       = "patient"
   patient_api_description = "The REST API that supports CRUD operations on patients in this application"
-  patient_api_version = "1.0"
-  patient_api_invoke_url = "https://${local.patient_api_title}"
+  patient_api_version     = "1.0"
+  patient_api_invoke_url  = "https://${local.patient_api_title}"
 
   # Add endpoint variables
-  patient_api_add_path = "v1/${local.patient_api_title}/add"
+  patient_api_add_path        = "v1/${local.patient_api_title}/add"
   patient_api_add_description = "The endpoint that adds a patient to the database."
+
+  # Retrieve endpoint variables
+  patient_api_retrieve_path        = "v1/${local.patient_api_title}/get"
+  patient_api_retrieve_description = "The endpoint that retrieves a patient from the database"
 
 
   gateway_responses = [
