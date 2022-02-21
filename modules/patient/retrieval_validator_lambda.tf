@@ -14,7 +14,7 @@ resource "aws_lambda_function" "the_patient_retrieval_validator_lambda_function"
 
   environment {
     variables = {
-      PATIENT_CREATOR_LAMBDA_ARN = aws_lambda_function.the_patient_creator_lambda_function.arn
+      PATIENT_RETRIEVER_LAMBDA_ARN = aws_lambda_function.the_patient_retriever_lambda_function.arn
     }
   }
 
