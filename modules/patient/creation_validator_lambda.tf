@@ -97,7 +97,7 @@ data "archive_file" "the_patient_creation_validator_lambda_zip" {
 # -----------------------------------------------
 # Module Locals
 locals {
-  patient_creation_validator_lambda_name                 = "patient_creation_validator_lambda"
+  patient_creation_validator_lambda_name                 = "creation_validator_lambda"
   patient_creation_validator_lambda_pre_fixed_name = "${var.patient-prefix}${local.patient_creation_validator_lambda_name}"
   patient_creation_validator_lambda_function_source_path = "${path.module}/lambda/${local.patient_creation_validator_lambda_name}.py"
   patient_creation_validator_lambda_function_output_path = "${path.module}/lambda/${local.patient_creation_validator_lambda_pre_fixed_name}.zip"
