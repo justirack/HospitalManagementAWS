@@ -27,6 +27,11 @@ paths:
   ${retrieve_path}:
     get:
       description: ${retrieve_description}
+      parameters:
+        - in: query
+          name: id
+          type: string
+          required: false
       responses:
         '200':
           description: "The patient was retrieved"
