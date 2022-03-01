@@ -30,15 +30,11 @@ def lambda_handler(event, context):
     )
     __logger.info("Received response: %s", response)
 
-    # Return the dynamodb response if it was not successful
-    if response['ResponseMetadata']['HTTPStatusCode'] != 200:
-        __logger.info(f'returning {response}')
-        return response
-
     # Add the patient id to the response if the add was successful
-    response.update({
-        'patient_id': patient_id
-    })
+    if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+        response.update({
+            'patient_id': patient_id
+        })
 
     __logger.info(f'Returning {response}')
     return response

@@ -19,4 +19,7 @@ provider "aws" {
 # :: Module calls
 module "patient_module" {
   source = "./modules/patient"
+
+  # Variables
+  patient-prefix = "patient-"
 }

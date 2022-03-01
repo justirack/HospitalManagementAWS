@@ -45,7 +45,7 @@ def lambda_handler(event, context):
         return __bad_request
 
     if "date_of_birth" not in body:
-        __logger.indo(f'The request does not contain a date of birth. Returning 400 status code.')
+        __logger.info(f'The request does not contain a date of birth. Returning 400 status code.')
         __bad_request.update({
             "body": "The patient could not be added as date_of_birth was not defined"
         })
@@ -58,24 +58,29 @@ def lambda_handler(event, context):
         Payload=json.dumps(body)
     )
 
-    __logger.info(f'Received response: {response}')
+    response_payload = json.load(response["Payload"])
+    __logger.info(f'Received response: {response_payload}')
 
-    # If the status code is not 200 something went wrong, return a 500 status code
-    if response['StatusCode'] != 200:
-        __logger.info(f'Something went wrong adding the patient to the database. Returning 500 status code.')
+    # If the status code is 200 return a success message
+    if response['StatusCode'] == 200:
+        __logger.info(f'The patient was successfully added to the database. Returning 200 status code.')
         return {
-            "statusCode": 500,
+            "statusCode": 200,
             "headers": {
-                'Content-Type': 'text/html; charset=utf-8',
+                'Content-Type': 'text/html; charset=utf-8'
             },
-            "body": "Something went wrong adding the client to the database."
+            "body": json.dumps({
+                "message": "The patient was successfully added to the database",
+                "patient_id": response_payload["patient_id"]
+            })
+
         }
 
-    __logger.info(f'The patient was successfully added to the database. Returning 200 status code.')
+    __logger.info(f'Something went wrong adding the patient to the database. Returning 500 status code.')
     return {
-        "statusCode": 200,
+        "statusCode": 500,
         "headers": {
-            'Content-Type': 'text/html; charset=utf-8'
+            'Content-Type': 'text/html; charset=utf-8',
         },
-        "body": "The patient was successfully added to the database"
+        "body": "Something went wrong adding the client to the database."
     }
