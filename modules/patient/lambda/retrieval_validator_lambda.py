@@ -34,14 +34,14 @@ def lambda_handler(event, context):
     response_payload = json.load(response["Payload"])
     __logger.info(f'Received response: {response_payload}')
 
-    if response_payload is not None:
+    if response['StatusCode'] == 200:
         __logger.info(f'The patient was successfully added to the database. Returning 200 status code.')
         return {
             "statusCode": 200,
             "headers": {
                 'Content-Type': 'text/html; charset=utf-8'
             },
-            "body": response_payload
+            "body": json.dumps(response_payload)
         }
 
     __logger.info(f"No patient with the id {event['queryStringParameters']['id']} was found in the database")
