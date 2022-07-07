@@ -5,7 +5,7 @@ import os
 
 __PATIENT_CREATOR_LAMBDA_ARN = os.getenv('PATIENT_CREATOR_LAMBDA_ARN')
 
-lambda_client = boto3.client('lambda')
+__lambda_client = boto3.client('lambda')
 
 __logger = logging.getLogger()
 __logger.setLevel(logging.INFO)
@@ -18,41 +18,21 @@ def lambda_handler(event, context):
 
     # If no body exists return to avoid an error being thrown
     if event['body'] is None:
-        __logger.info(
-            'The request does not contain a body. Please add a body that includes a first name,'
-            ' last name and date of birth. Returning 400 status code.')
-
-        __bad_request.update({
-            "body": "The request must contain a body, which must contain a first name, last name and date of birth."
-        })
-        return __bad_request
+        return return_bad_request('The request does not contain a body. Please add a body that includes a first name, '
+                                  'last name and date of birth. Returning 400 status code.')
 
     body = json.loads(event['body'])
 
     # Make sure all patient data is included in the request, return if something is missing
     if "first_name" not in body:
-        __logger.info(f'The request does not contain a first name. Returning 400 status code.')
-        __bad_request.update({
-            "body": "The patient could not be added as first_name was not defined"
-        })
-        return __bad_request
-
-    if "last_name" not in body:
-        __logger.info(f'The request does not contain a last name. Returning 400 status code.')
-        __bad_request.update({
-            "body": "The patient could not be added as last_name was not defined"
-        })
-        return __bad_request
-
-    if "date_of_birth" not in body:
-        __logger.info(f'The request does not contain a date of birth. Returning 400 status code.')
-        __bad_request.update({
-            "body": "The patient could not be added as date_of_birth was not defined"
-        })
-        return __bad_request
+        return return_bad_request(f'The request does not contain a first name. Returning 400 status code.')
+    elif "last_name" not in body:
+        return return_bad_request(f'The request does not contain a last name. Returning 400 status code.')
+    elif "date_of_birth" not in body:
+        return return_bad_request(f'The request does not contain a date of birth. Returning 400 status code.')
 
     # Send the patient data to the next lambda
-    response = lambda_client.invoke(
+    response = __lambda_client.invoke(
         FunctionName=__PATIENT_CREATOR_LAMBDA_ARN,
         InvocationType="RequestResponse",
         Payload=json.dumps(body)
@@ -84,3 +64,12 @@ def lambda_handler(event, context):
         },
         "body": "Something went wrong adding the client to the database."
     }
+
+
+def return_bad_request(message):
+    __logger.info(message)
+    __bad_request.update({
+        "body": message
+    })
+
+    return __bad_request
