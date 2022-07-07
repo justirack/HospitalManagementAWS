@@ -5,7 +5,7 @@ import uuid
 
 __DYNAMO_DB_TABLE_NAME = os.getenv('PATIENT_TABLE_NAME')
 
-dynamodb = boto3.client('dynamodb')
+__dynamodb = boto3.client('dynamodb')
 
 __logger = logging.getLogger()
 __logger.setLevel(logging.INFO)
@@ -17,8 +17,7 @@ def lambda_handler(event, context):
     patient_id = str(uuid.uuid4())
     sort_key = event['first_name'][0] + event['last_name'][0] + event['date_of_birth']
 
-    __logger.info(f'Adding patient with sort key {sort_key} to the database')
-    response = dynamodb.put_item(
+g    response = __dynamodb.put_item(
         TableName=__DYNAMO_DB_TABLE_NAME,
         Item={
             "patient_id": {'S': patient_id},
@@ -28,7 +27,7 @@ def lambda_handler(event, context):
             "date_of_birth": {'S': event['date_of_birth']}
         }
     )
-    __logger.info("Received response: %s", response)
+    __logger.info(f"Received response: {response}")
 
     # Add the patient id to the response if the add was successful
     if response['ResponseMetadata']['HTTPStatusCode'] == 200:
@@ -36,5 +35,4 @@ def lambda_handler(event, context):
             'patient_id': patient_id
         })
 
-    __logger.info(f'Returning {response}')
     return response
