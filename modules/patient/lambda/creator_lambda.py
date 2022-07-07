@@ -12,7 +12,7 @@ __logger.setLevel(logging.INFO)
 
 
 def lambda_handler(event, context):
-    __logger.info("This lambda was invoked with event: %s", event)
+    __logger.info(f"This lambda was invoked with event: {event}")
 
     patient_id = str(uuid.uuid4())
     sort_key = event['first_name'][0] + event['last_name'][0] + event['date_of_birth']
