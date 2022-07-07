@@ -17,7 +17,7 @@ def lambda_handler(event, context):
     __logger.info(f'This lambda was invoked with event: {event}')
 
     # Make sure an ID was passed to use in the search
-    if 'id' not in event['queryStringParameters']:
+    if not event['queryStringParameters'] or event['queryStringParameters']['id']:
         __bad_request.update({
             "body": "A patient id must be passed to retrieve it from the database"
         })
