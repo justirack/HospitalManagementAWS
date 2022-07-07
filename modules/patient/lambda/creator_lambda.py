@@ -17,7 +17,7 @@ def lambda_handler(event, context):
     patient_id = str(uuid.uuid4())
     sort_key = event['first_name'][0] + event['last_name'][0] + event['date_of_birth']
 
-g    response = __dynamodb.put_item(
+    response = __dynamodb.put_item(
         TableName=__DYNAMO_DB_TABLE_NAME,
         Item={
             "patient_id": {'S': patient_id},
