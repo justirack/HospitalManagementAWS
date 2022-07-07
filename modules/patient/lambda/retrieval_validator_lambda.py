@@ -17,11 +17,8 @@ def lambda_handler(event, context):
     __logger.info(f'This lambda was invoked with event: {event}')
 
     # Make sure an ID was passed to use in the search
-    if not event['queryStringParameters'] or event['queryStringParameters']['id']:
-        __bad_request.update({
-            "body": "A patient id must be passed to retrieve it from the database"
-        })
-        return __bad_request
+    if not event['queryStringParameters'] or not event['queryStringParameters']['id']:
+        return return_bad_request("A patient id must be passed to retrieve it from the database")
 
     # Invoke the lambda that will search for the patient
     __logger.info(f'Retrieving patient with id {event["queryStringParameters"]["id"]}')
@@ -44,8 +41,13 @@ def lambda_handler(event, context):
             "body": json.dumps(response_payload)
         }
 
-    __logger.info(f"No patient with the id {event['queryStringParameters']['id']} was found in the database")
+    return return_bad_request(f"No patient with the id {event['queryStringParameters']['id']} was found in the database")
+
+
+def return_bad_request(message):
+    __logger.info(message)
     __bad_request.update({
-        "body": f"No patient with the id {event['queryStringParameters']['id']} was found in the database"
+        "body": message
     })
+
     return __bad_request
