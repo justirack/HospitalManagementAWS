@@ -55,13 +55,41 @@ data "aws_iam_policy_document" "the_patient_creator_lambda_execution_policy_docu
     effect = "Allow"
 
     actions = [
-      "logs:*",
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+
+    resources = ["arn:aws:logs:*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    # This permission will need to be changed
+    actions = [
       "dynamodb:*"
     ]
 
     resources = [
-      "arn:aws:logs:*",
-      "arn:aws:dynamodb:*"
+      aws_dynamodb_table.the_patient_table.arn,
+      "${aws_dynamodb_table.the_patient_table.arn}/*"
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "sqs:GetQueueAttributes",
+      "sqs:SendMessage",
+      "sqs:DeleteMessage",
+      "sqs:ReceiveMessage"
+    ]
+
+    resources = [
+      aws_sqs_queue.the_create_patient_queue.arn,
+      "${aws_sqs_queue.the_create_patient_queue.arn}/*",
     ]
   }
 }
