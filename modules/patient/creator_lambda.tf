@@ -46,6 +46,13 @@ resource "aws_iam_role_policy_attachment" "the_patient_creator_lambda_execution_
   role       = aws_iam_role.the_patient_creator_lambda_role.name
 }
 
+resource "aws_lambda_event_source_mapping" "patient_creator" {
+  event_source_arn                   = aws_sqs_queue.the_create_patient_queue.arn
+  function_name                      = aws_lambda_function.the_patient_creator_lambda_function.function_name
+  batch_size                         = 10000
+  maximum_batching_window_in_seconds = 10
+}
+
 # -----------------------------------------------
 # Module Data
 
