@@ -12,7 +12,7 @@ __CREATE_PATIENT_QUEUE_URL = os.getenv('PATIENT_TABLE_NAME')
 def lambda_handler(event, context):
     __logger.info(f'Lambda was invoked with: {event}')
 
-    send_message_to_queue(__CREATE_PATIENT_QUEUE_URL, "Test message body")
+    send_message_to_queue(__CREATE_PATIENT_QUEUE_URL, event)
 
 
 def send_message_to_queue(queue_url, body):
