@@ -100,8 +100,8 @@ data "aws_iam_policy_document" "the_patient_validator_lambda_sqs_policy_document
     ]
 
     resources = [
-      aws_sqs_queue.the_patient_validator_queue.arn,
-      "${aws_sqs_queue.the_patient_validator_queue.arn}/*"
+      aws_sqs_queue.the_create_patient_queue.arn,
+      "${aws_sqs_queue.the_create_patient_queue.arn}/*"
     ]
   }
 }
