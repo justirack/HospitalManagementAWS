@@ -38,21 +38,12 @@ resource "aws_iam_policy" "the_patient_validator_lambda_execution_policy" {
   policy = data.aws_iam_policy_document.the_patient_validator_lambda_execution_policy_document.json
 }
 
-resource "aws_iam_policy" "the_patient_validator_lambda_sqs_policy" {
-  name   = "${local.patient_validator_lambda_pre_fixed_name}_sqs_policy"
-  policy = data.aws_iam_policy_document.the_patient_validator_lambda_sqs_policy_document.json
-}
-
 # Gives the lambda the basic permission required for CloudWatch logging
 resource "aws_iam_role_policy_attachment" "the_patient_validator_lambda_execution_role_policy_attachment" {
   policy_arn = aws_iam_policy.the_patient_validator_lambda_execution_policy.arn
   role       = aws_iam_role.the_patient_validator_lambda_role.name
 }
 
-resource "aws_iam_role_policy_attachment" "the_patient_validator_lambda_sqs_role_policy_attachment" {
-  policy_arn = aws_iam_policy.the_patient_validator_lambda_sqs_policy.arn
-  role       = aws_iam_role.the_patient_validator_lambda_role.name
-}
 
 
 # ------------------------------------------------------
@@ -69,6 +60,18 @@ data "aws_iam_policy_document" "the_patient_validator_lambda_execution_policy_do
     ]
 
     resources = ["arn:aws:logs:*"]
+  }
+
+  statement {
+    effect  = "Allow"
+    actions = [
+      "sqs:SendMessage"
+    ]
+
+    resources = [
+      aws_sqs_queue.the_create_patient_queue.arn,
+      "${aws_sqs_queue.the_create_patient_queue.arn}/*"
+    ]
   }
 }
 
@@ -87,22 +90,6 @@ data "aws_iam_policy_document" "the_patient_validator_lambda_assume_role_policy_
 
       ]
     }
-  }
-}
-
-data "aws_iam_policy_document" "the_patient_validator_lambda_sqs_policy_document" {
-  version = "2012-10-17"
-
-  statement {
-    effect  = "Allow"
-    actions = [
-      "sqs:SendMessage"
-    ]
-
-    resources = [
-      aws_sqs_queue.the_create_patient_queue.arn,
-      "${aws_sqs_queue.the_create_patient_queue.arn}/*"
-    ]
   }
 }
 
