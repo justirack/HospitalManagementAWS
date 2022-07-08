@@ -23,4 +23,5 @@ module "patient_module" {
   # Variables
   patient-prefix = "patient-"
   python_runtime = "python3.9"
+  sqs_max_receive_count = 10
 }
