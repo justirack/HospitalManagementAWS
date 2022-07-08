@@ -22,4 +22,5 @@ module "patient_module" {
 
   # Variables
   patient-prefix = "patient-"
+  python_runtime = "python3.9"
 }
