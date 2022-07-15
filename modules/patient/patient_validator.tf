@@ -1,9 +1,10 @@
-# ------------------------------------------------------
-# Module resources
+# This file contains the infrastructure to support the patient_validator lambda
 
+# -----------------------------------------------
+# Module Resources
 resource "aws_lambda_function" "the_patient_validator_lambda_function" {
-  function_name    = local.patient_validator_lambda_pre_fixed_name
-  handler          = "${local.patient_validator_lambda_pre_fixed_name}.lambda_handler"
+  function_name    = local.patient_validator_lambda_name
+  handler          = "${local.patient_validator_lambda_name}.lambda_handler"
   role             = aws_iam_role.the_patient_validator_lambda_role.arn
   runtime          = var.python_runtime
   timeout          = 60
@@ -20,46 +21,48 @@ resource "aws_lambda_function" "the_patient_validator_lambda_function" {
   depends_on = [aws_cloudwatch_log_group.the_patient_validator_lambda_cloudwatch_group]
 }
 
+# Configures the cloudwatch group for this lambda
 # This resource needs to have the same name as the lambda function
 resource "aws_cloudwatch_log_group" "the_patient_validator_lambda_cloudwatch_group" {
-  name              = "/aws/lambda/${local.patient_validator_lambda_pre_fixed_name}"
+  name              = local.patient_validator_lambda_name
   retention_in_days = 90
 }
 
 resource "aws_iam_role" "the_patient_validator_lambda_role" {
-  name               = "${local.patient_validator_lambda_pre_fixed_name}_lambda_role"
+  name               = "${local.patient_validator_lambda_name}_lambda_role"
   path               = "/"
   assume_role_policy = data.aws_iam_policy_document.the_patient_validator_lambda_assume_role_policy_document.json
 }
 
-# This policy defines the basic CloudWatch log permissions that every Lambda needs to execute.
-resource "aws_iam_policy" "the_patient_validator_lambda_execution_policy" {
-  name   = "${local.patient_validator_lambda_pre_fixed_name}_lambda_execution_policy"
+# This policy defines the basic CloudWatch log permissions that every lambda needs to execute
+resource "aws_iam_policy" "the_patient_validator_lambda-execution_policy" {
+  name   = "${local.patient_validator_lambda_name}_lambda_execution_policy"
   policy = data.aws_iam_policy_document.the_patient_validator_lambda_execution_policy_document.json
 }
 
-# Gives the lambda the basic permission required for CloudWatch logging
+# Gives the lambda basic permission required for CloudWatch logging
 resource "aws_iam_role_policy_attachment" "the_patient_validator_lambda_execution_role_policy_attachment" {
-  policy_arn = aws_iam_policy.the_patient_validator_lambda_execution_policy.arn
+  policy_arn = aws_iam_policy.the_patient_validator_lambda-execution_policy.arn
   role       = aws_iam_role.the_patient_validator_lambda_role.name
 }
 
+# -----------------------------------------------
+# Module Data
 
-
-# ------------------------------------------------------
-# Module data
-# Used to configure cloudwatch logs
+# Data used to allow lambda to emit to cloudwatch logs
 data "aws_iam_policy_document" "the_patient_validator_lambda_execution_policy_document" {
   statement {
     effect = "Allow"
 
     actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:PutLogEvents"
+      "logs:*",
+      "lambda:*"
     ]
 
-    resources = ["arn:aws:logs:*"]
+    resources = [
+      "arn:aws:logs:*",
+      "arn:aws:lambda:*"
+    ]
   }
 
   statement {
@@ -99,15 +102,14 @@ data "archive_file" "the_patient_validator_lambda_zip" {
 
   source {
     content  = file(local.patient_validator_lambda_function_source_path)
-    filename = "${local.patient_validator_lambda_pre_fixed_name}.py"
+    filename = "${local.patient_validator_lambda_name}.py"
   }
 }
 
-# ------------------------------------------------------
-# Module locals
+# -----------------------------------------------
+# Module Locals
 locals {
   patient_validator_lambda_name                 = "patient_validator"
-  patient_validator_lambda_pre_fixed_name       = "${var.patient-prefix}${local.patient_validator_lambda_name}"
   patient_validator_lambda_function_source_path = "${path.module}/lambda/${local.patient_validator_lambda_name}.py"
-  patient_validator_lambda_function_output_path = "${path.module}/lambda/${local.patient_validator_lambda_pre_fixed_name}.zip"
+  patient_validator_lambda_function_output_path = "${path.module}/lambda/${local.patient_validator_lambda_name}.zip"
 }
