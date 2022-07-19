@@ -64,12 +64,16 @@ data "template_file" "the_patient_open_api_specification_file" {
     invoke_url  = local.patient_api_invoke_url
 
     # Add endpoint variables
-    add_path                                          = local.patient_api_add_path
-    add_description                                   = local.patient_api_add_description
+    add_path        = local.patient_api_add_path
+    add_description = local.patient_api_add_description
 
     # retrieve endpoint variables
-    retrieve_path                                      = local.patient_api_retrieve_path
-    retrieve_description                               = local.patient_api_retrieve_description
+    retrieve_path        = local.patient_api_retrieve_path
+    retrieve_description = local.patient_api_retrieve_description
+
+    # Update endpoint variables
+    update_path        = local.patient_api_update_path
+    update_description = local.patient_api_update_description
 
     patient_validator_lambda_invoke_arn      = aws_lambda_function.the_patient_validator_lambda_function.invoke_arn
     patient_validator_lambda_invoke_role_arn = aws_iam_role.the_patient_validator_lambda_role.arn
@@ -95,6 +99,10 @@ locals {
   # retrieve endpoint variables
   patient_api_retrieve_path        = "v1/${local.patient_api_title}/get"
   patient_api_retrieve_description = "The endpoint that gets a patient from the database"
+
+  # Update endpoint variables
+  patient_api_update_path        = "v1/${local.patient_api_title}/update"
+  patient_api_update_description = "The endpoint that updates an existing patients information."
 
   gateway_responses = [
     "ACCESS_DENIED",
