@@ -25,7 +25,7 @@ See sample json below:
 
 ## patient/get
 The get patient endpoint expects the patients id ad a query parameter in the following format.<br>
-``` json
+```
 {
   id="12345678-1234-1234-123456789012"
 }
