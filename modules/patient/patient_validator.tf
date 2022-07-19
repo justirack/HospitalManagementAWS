@@ -15,6 +15,7 @@ resource "aws_lambda_function" "the_patient_validator_lambda_function" {
   environment {
     variables = {
       CREATE_PATIENT_QUEUE_URL = aws_sqs_queue.the_create_patient_queue.url
+      RETRIEVE_PATIENT_LAMBDA_INVOKE_URL = aws_lambda_function.the_patient_retriever_lambda_function.arn
     }
   }
 
@@ -74,6 +75,18 @@ data "aws_iam_policy_document" "the_patient_validator_lambda_execution_policy_do
     resources = [
       aws_sqs_queue.the_create_patient_queue.arn,
       "${aws_sqs_queue.the_create_patient_queue.arn}/*"
+    ]
+  }
+
+  statement {
+    effect  = "Allow"
+    actions = [
+      "lambda:InvokeFunction"
+    ]
+
+    resources = [
+      aws_lambda_function.the_patient_retriever_lambda_function.arn,
+      "${aws_lambda_function.the_patient_retriever_lambda_function.arn}/*"
     ]
   }
 }
