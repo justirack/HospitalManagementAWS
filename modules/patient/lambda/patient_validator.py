@@ -46,7 +46,6 @@ def lambda_handler(event, context):
     elif path == __base_path + 'get':
         __logger.info('Invoked by the get endpoint. Trying to get a patient from the database')
 
-
     return {
         "statusCode": 200,
         "headers": {
