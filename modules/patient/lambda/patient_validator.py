@@ -67,6 +67,9 @@ def lambda_handler(event, context):
             return format_return_message(200, json.dumps(patients))
         else:
             return format_return_message(500, "Something went wrong. Please try again later.")
+    elif path == __base_path + 'update:':
+        __logger.info('Invoked by the update endpoint. Trying to update a patients information')
+        return format_return_message(200, 'Success')
     else:
         __logger.info(f'Invoked by an unknown endpoint: {path}')
         format_return_message(500, f'Invoked by an unknown endpoint: {path}')
