@@ -8,6 +8,9 @@ __logger.setLevel(logging.INFO)
 
 __base_path = '/v1/patient/'
 
+__lambda = boto3.client('lambda')
+__patient_retrieval_lambda_arn = os.getenv('RETRIEVE_PATIENT_LAMBDA_INVOKE_URL')
+
 __sqs = boto3.client('sqs')
 __create_patient_queue_url = os.getenv('CREATE_PATIENT_QUEUE_URL')
 
@@ -44,17 +47,29 @@ def lambda_handler(event, context):
         else:
             return format_return_message(500, "Something went wrong. Please try again later.")
     elif path == __base_path + 'get':
-        __logger.info('Invoked by the get endpoint. Trying to get a patient from the database')
+        __logger.info('Invoked by the get endpoint. Trying to retrieve a patient from the database.')
 
-    return {
-        "statusCode": 200,
-        "headers": {
-            'Content-Type': 'text/html; charset=utf-8'
-        },
-        "body": json.dumps({
-            "message": "Success"
-        })
-    }
+        try:
+            dict_contains_item(event['queryStringParameters'], 'id')
+        except AssertionError as error:
+            __logger.error(f'Error was raised validating contents of event: {error}')
+            return format_return_message(400, str(error))
+
+        response = __lambda.invoke(
+            FunctionName=__patient_retrieval_lambda_arn,
+            InvocationType="RequestResponse",
+            Payload=json.dumps(event['queryStringParameters']['id'])
+        )
+        patients = json.load(response["Payload"])
+
+        if response['StatusCode'] == 200 and patients is not None:
+            __logger.info(f'Retrieved {len(patients)} from the database.')
+            return format_return_message(200, json.dumps(patients))
+        else:
+            return format_return_message(500, "Something went wrong. Please try again later.")
+    else:
+        __logger.info(f'Invoked by an unknown endpoint: {path}')
+        format_return_message(500, f'Invoked by an unknown endpoint: {path}')
 
 
 def dict_contains_item(dict_to_check, item):
