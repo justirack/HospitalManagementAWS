@@ -22,21 +22,16 @@ paths:
       x-amazon-apigateway-integration:
         type: "aws_proxy"
         httpMethod: POST
-        uri: ${patient_creation_validator_lambda_invoke_arn}
-        credentials: ${patient_creation_validator_lambda_invoke_role_arn}
+        uri: ${patient_validator_lambda_invoke_arn}
+        credentials: ${patient_validator_lambda_invoke_role_arn}
   ${retrieve_path}:
     get:
       description: ${retrieve_description}
-      parameters:
-        - in: query
-          name: id
-          type: string
-          required: false
       responses:
         '200':
           description: "The patient was retrieved"
       x-amazon-apigateway-integration:
         type: "aws_proxy"
         httpMethod: POST
-        uri: ${patient_retrieval_validator_lambda_invoke_arn}
-        credentials: ${patient_retrieval_validator_lambda_invoke_role_arn}
+        uri: ${patient_validator_lambda_invoke_arn}
+        credentials: ${patient_validator_lambda_invoke_role_arn}

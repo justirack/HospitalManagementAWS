@@ -66,14 +66,13 @@ data "template_file" "the_patient_open_api_specification_file" {
     # Add endpoint variables
     add_path                                          = local.patient_api_add_path
     add_description                                   = local.patient_api_add_description
-    patient_creation_validator_lambda_invoke_arn      = aws_lambda_function.the_patient_creation_validator_lambda_function.invoke_arn
-    patient_creation_validator_lambda_invoke_role_arn = aws_iam_role.the_patient_creation_validator_lambda_role.arn
 
     # retrieve endpoint variables
     retrieve_path                                      = local.patient_api_retrieve_path
     retrieve_description                               = local.patient_api_retrieve_description
-    patient_retrieval_validator_lambda_invoke_arn      = aws_lambda_function.the_patient_retrieval_validator_lambda_function.invoke_arn
-    patient_retrieval_validator_lambda_invoke_role_arn = aws_iam_role.the_patient_retrieval_validator_lambda_role.arn
+
+    patient_validator_lambda_invoke_arn      = aws_lambda_function.the_patient_validator_lambda_function.invoke_arn
+    patient_validator_lambda_invoke_role_arn = aws_iam_role.the_patient_validator_lambda_role.arn
   }
 }
 
