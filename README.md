@@ -12,7 +12,7 @@ The following draw.io diagram contains the initial architecture diagram for pati
 
 # Endpoint Request Specifications
 ## patient/add
-The add patient endpoint expects the patients first name, last name and date of birth in <code>yyyy-mm-dd</code> format.<br>
+The add patient endpoint expects the patients first name, last name and date of birth in <code>yyyy-mm-dd</code> format as the body of the request.<br>
 See sample json below:
  
 ``` json
@@ -20,5 +20,13 @@ See sample json below:
   "first_name":"Justin",
   "last_name":"Rackley",
   "date_of_birth":"2002-02-09"
+}
+```
+
+## patient/get
+The get patient endpoint expects the patients id ad a query parameter in the following format.<br>
+``` json
+{
+  id="12345678-1234-1234-123456789012"
 }
 ```
