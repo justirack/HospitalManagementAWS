@@ -32,17 +32,19 @@ The get patient endpoint expects the patients id ad a query parameter in the fol
 ```
 
 ## patient/update
-The update endpoint expects any combination of the patients first name, last name or date of birth in the <code>yyyy-mm-dd</code> format as the body of the request. Whatever data is passed will be updated and used as the new values in the database<br>
+The update endpoint expects the patient id along with any combination of the patients first name, last name or date of birth in the <code>yyyy-mm-dd</code> format as the body of the request. Whatever data is passed will be updated and used as the new values in the database<br>
 See sample JSON blobs below:
 
 ``` json
 {
+  "id":"1234",
   "first_name":"Justin"
 }
 ```
 
 ``` json
 {
+  "id":"1234",
   "last_name":"Rackley",
   "date_of_birth":"2002-02-09"
 }
@@ -50,6 +52,7 @@ See sample JSON blobs below:
 
 ``` json
 {
+  "id":"1234",
   "first_name":"Justin",
   "last_name":"Rackley",
   "date_of_birth":"2002-02-09"
