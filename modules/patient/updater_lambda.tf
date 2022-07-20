@@ -46,6 +46,13 @@ resource "aws_iam_role_policy_attachment" "the_patient_updater_lambda_execution_
   role       = aws_iam_role.the_patient_updater_lambda_role.name
 }
 
+resource "aws_lambda_event_source_mapping" "patient_updater" {
+  event_source_arn                   = aws_sqs_queue.the_update_patient_queue.arn
+  function_name                      = aws_lambda_function.the_patient_updater_lambda_function.function_name
+  batch_size                         = 10000
+  maximum_batching_window_in_seconds = 10
+}
+
 # -----------------------------------------------
 # Module Data
 
@@ -61,6 +68,36 @@ data "aws_iam_policy_document" "the_patient_updater_lambda_execution_policy_docu
     ]
 
     resources = ["arn:aws:logs:*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    # This permission will need to be changed
+    actions = [
+      "dynamodb:*"
+    ]
+
+    resources = [
+      aws_dynamodb_table.the_patient_table.arn,
+      "${aws_dynamodb_table.the_patient_table.arn}/*"
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "sqs:GetQueueAttributes",
+      "sqs:SendMessage",
+      "sqs:DeleteMessage",
+      "sqs:ReceiveMessage"
+    ]
+
+    resources = [
+      aws_sqs_queue.the_update_patient_queue.arn,
+      "${aws_sqs_queue.the_update_patient_queue.arn}/*",
+    ]
   }
 }
 

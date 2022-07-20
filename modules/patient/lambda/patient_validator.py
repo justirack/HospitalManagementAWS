@@ -13,6 +13,7 @@ __patient_retrieval_lambda_arn = os.getenv('RETRIEVE_PATIENT_LAMBDA_INVOKE_URL')
 
 __sqs = boto3.client('sqs')
 __create_patient_queue_url = os.getenv('CREATE_PATIENT_QUEUE_URL')
+__update_patient_queue_url = os.getenv('UPDATE_PATIENT_QUEUE_URL')
 
 
 def lambda_handler(event, context):
@@ -67,9 +68,16 @@ def lambda_handler(event, context):
             return format_return_message(200, json.dumps(patients))
         else:
             return format_return_message(500, "Something went wrong. Please try again later.")
-    elif path == __base_path + 'update:':
+    elif path == __base_path + 'update':
         __logger.info('Invoked by the update endpoint. Trying to update a patients information')
-        return format_return_message(200, 'Success')
+
+        response = send_message_to_queue(__update_patient_queue_url, event['body'])
+
+        __logger.info(f'Response: {response}')
+        if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+            return format_return_message(200, "The patients information will be updated in the database")
+        else:
+            return format_return_message(500, "Something went wrong. Please try again later.")
     else:
         __logger.info(f'Invoked by an unknown endpoint: {path}')
         format_return_message(500, f'Invoked by an unknown endpoint: {path}')
