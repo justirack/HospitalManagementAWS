@@ -16,7 +16,9 @@ resource "aws_lambda_function" "the_user_validation_lambda_function" {
     variables = {
       CREATE_USER_QUEUE_URL = aws_sqs_queue.the_create_user_queue.url
       UPDATE_USER_QUEUE_URL = aws_sqs_queue.the_update_user_queue.url
-      RETRIEVE_USER_LAMBDA_INVOKE_URL = aws_lambda_function.the_user_retriever_lambda_function.arn
+      RETRIEVE_USER_LAMBDA_INVOKE_URL = aws_lambda_function.the_user_retrieval_lambda_function.arn
+      CREATE_USER_LAMBDA_INVOKE_URL = aws_lambda_function.the_user_creation_lambda_function.arn
+      UPDATE_USER_LAMBDA_INVOKE_URL = aws_lambda_function.the_user_updater_lambda_function.arn
     }
   }
 
