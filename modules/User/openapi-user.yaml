@@ -12,13 +12,6 @@ paths:
       responses:
         "200":
           description: "The user was successfully added to the table."
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
       x-amazon-apigateway-integration:
         type: "aws_proxy"
         httpMethod: POST
@@ -41,13 +34,17 @@ paths:
       responses:
         "200":
           description: "The user was successfully updated to the table."
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri: ${user_validation_lambda_invoke_arn}
+        credentials: ${user_validation_lambda_invoke_role_arn}
+  ${delete_path}:
+    delete:
+      description: ${update_description}
+      responses:
+        "200":
+          description: "The user was successfully updated to the table."
       x-amazon-apigateway-integration:
         type: "aws_proxy"
         httpMethod: POST

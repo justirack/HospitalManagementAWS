@@ -75,6 +75,10 @@ data "template_file" "the_user_open_api_specification_file" {
     update_path        = local.user_api_update_path
     update_description = local.user_api_update_description
 
+    # Delete endpoint variables
+    delete_path        = local.user_api_delete_path
+    delete_description = local.user_api_delete_description
+
     user_validation_lambda_invoke_arn      = aws_lambda_function.the_user_validation_lambda_function.invoke_arn
     user_validation_lambda_invoke_role_arn = aws_iam_role.the_user_validation_lambda_role.arn
   }
@@ -103,6 +107,10 @@ locals {
   # Update endpoint variables
   user_api_update_path        = "v1/${local.user_api_title}/update"
   user_api_update_description = "The endpoint that updates an existing users information."
+
+  # Delete endpoint variables
+  user_api_delete_path        = "v1/${local.user_api_title}/delete"
+  user_api_delete_description = "The endpoint that deletes a users information"
 
   gateway_responses = [
     "ACCESS_DENIED",
