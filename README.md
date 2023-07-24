@@ -21,11 +21,13 @@ The add user endpoint expects the following:
 
 Sample JSON:
 ```json
-"first_name": "Justin",
-"last_name": "Rackley",
-"date_of_birth": "2002-02-09",
-"phone_number": "(123)456-7890",
-"user_type": "patient"
+{
+ "first_name": "Justin",
+ "last_name": "Rackley",
+ "date_of_birth": "2002-02-09",
+ "phone_number": "(123)456-7890",
+ "user_type": "patient"
+}
 ```
 
 
