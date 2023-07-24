@@ -14,7 +14,7 @@ resource "aws_lambda_function" "the_user_creation_lambda_function" {
 
   environment {
     variables = {
-      user_TABLE_NAME = aws_dynamodb_table.the_user_table.name
+      USER_TABLE_NAME = aws_dynamodb_table.the_user_table.name
     }
   }
 
@@ -81,22 +81,6 @@ data "aws_iam_policy_document" "the_user_creation_lambda_execution_policy_docume
     resources = [
       aws_dynamodb_table.the_user_table.arn,
       "${aws_dynamodb_table.the_user_table.arn}/*"
-    ]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "sqs:GetQueueAttributes",
-      "sqs:SendMessage",
-      "sqs:DeleteMessage",
-      "sqs:ReceiveMessage"
-    ]
-
-    resources = [
-      aws_sqs_queue.the_create_user_queue.arn,
-      "${aws_sqs_queue.the_create_user_queue.arn}/*",
     ]
   }
 }
