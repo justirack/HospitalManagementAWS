@@ -29,10 +29,12 @@ def lambda_handler(event: dict, context: dict):
     __logger.info(f'Lambda was invoked with: {event}')
 
     path = event['path']
+    body = dict()
+    if event['body'] is not None:
+        body = json.loads(event['body'])
 
     # Handle a request to add a patient to the database
     if path == __base_path + 'add':
-        body = json.loads(event['body'])
         __logger.info(f'Invoked by the add endpoint. Validating information in request.')
 
         # Use the dict_contains_item function to make sure all required information is present in the request
@@ -102,7 +104,7 @@ def lambda_handler(event: dict, context: dict):
             return format_return_message(200, "No users found.")
         else:
             __logger.info(f'Something went wrong. Try again later.')
-            return format_return_message(500, f'Something went wrong. Try again later.')
+            return format_return_message(response['StatusCode'], f'Something went wrong. Try again later.')
 
     # Handle a request to update a patient in the database
     elif path == __base_path + 'update':
@@ -136,7 +138,7 @@ def format_return_message(status: int, body: str):
     """
     Formats a return json for the lambda function.
 
-    :param status: The status code integer of the response;
+    :param status: The status code integer of the response.
     :param body: The string body of the response.
     :return: A json blob that can be returned from the lambda function.
     """
@@ -148,5 +150,11 @@ def format_return_message(status: int, body: str):
 
 
 def validate_phone_number(number: str):
+    """
+    Uses a regex to ensure that a passed phone number is of a valid format.
+
+    :param number: The phone number to be checked .
+    :return: True if the phone number is valid, raise a ValueError if it is not.
+    """
     if not __regex.match(number):
         raise ValueError(f'The phone number entered is not in a valid format.')
