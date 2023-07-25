@@ -59,7 +59,7 @@ Sample JSON:
  "first_name": "John",
  "last_name": "Thompson",
  "date_of_birth": "2003-01-19",
- "phone_number": "(987)654-3210",
+ "phone_number": "(987)654-3210"
 }
 
 ```
