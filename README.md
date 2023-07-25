@@ -37,7 +37,7 @@ The endpoint returns:
 ## user/get
 The get patient endpoint expects the user id as a string query parameter. <br>
 Sample input:
-```
+```json
 id="12345678-1234-1234-123456789012"
 ```
 The get endpoint returns:
@@ -53,7 +53,7 @@ The update patient endpoint expects a user ID and any **subset** of the followin
 - Phone number (xxx)xxx-xxxx
 
 Sample JSON:
-```
+```json
 {
  "user_id": "12345678-1234-1234-123456789012",
  "first_name": "John",
