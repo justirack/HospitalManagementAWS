@@ -35,7 +35,7 @@ def lambda_handler(event: dict, context: dict):
 
     # Handle a request to add a patient to the database
     if path == __base_path + 'add':
-        return add_user(event, body)
+        return add_user(event)
 
     # Handle a request to get a patient from the database
     elif path == __base_path + 'get':
@@ -43,7 +43,7 @@ def lambda_handler(event: dict, context: dict):
 
     # Handle a request to update a patient in the database
     elif path == __base_path + 'update':
-        return update_user(event, body)
+        return update_user(event)
 
     # Handle a request to remove a patient from the database
     elif path == __base_path + 'delete':
@@ -55,8 +55,15 @@ def lambda_handler(event: dict, context: dict):
         return format_return_message(500, 'The validation lambda was invoked from an unknown endpoint.')
 
 
-def add_user(event: dict, body: dict):
+def add_user(event: dict):
+    """
+    Validates that the request contains all required information, then adds a new user to the database.
+
+    :param event: The event that the lambda function was invoked with, to be passed to the creation lambda.
+    :return: JSON containing a status code, and string message.
+    """
     __logger.info(f'Invoked by the add endpoint. Validating information in request.')
+    body = json.loads(event['body'])
 
     # Use the dict_contains_item function to make sure all required information is present in the request
     try:
@@ -100,6 +107,12 @@ def add_user(event: dict, body: dict):
 
 
 def get_user(event: dict):
+    """
+    Validates a request to the get endpoint, then retrieves a user from the database.
+
+    :param event: The event that the lambda function was invoked with, containing the user ID to search for.
+    :return:JSON containing a status code, and a string message.
+    """
     __logger.info(f'Invoked by the get endpoint. Validating request.')
 
     try:
@@ -128,8 +141,15 @@ def get_user(event: dict):
         return format_return_message(response['StatusCode'], f'Something went wrong. Try again later.')
 
 
-def update_user(event: dict, body:dict):
+def update_user(event: dict):
+    """
+    Validates a request to the update endpoint, then updates a users' information in the database.
+
+    :param event: The event that the lambda function was invoked with, containing.
+    :return: JSON containing a status code, and a string message.
+    """
     __logger.info(f'Invoked by the update endpoint. Validating request.')
+    body = json.loads(event['body'])
 
     try:
         keys = body.keys()
