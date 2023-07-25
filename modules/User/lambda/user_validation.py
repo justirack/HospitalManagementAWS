@@ -29,10 +29,10 @@ def lambda_handler(event: dict, context: dict):
     __logger.info(f'Lambda was invoked with: {event}')
 
     path = event['path']
-    body = json.loads(event['body'])
 
     # Handle a request to add a patient to the database
     if path == __base_path + 'add':
+        body = json.loads(event['body'])
         __logger.info(f'Invoked by the add endpoint. Validating information in request.')
 
         # Use the dict_contains_item function to make sure all required information is present in the request
@@ -74,20 +74,44 @@ def lambda_handler(event: dict, context: dict):
         # return an error message to the user
         else:
             return format_return_message(response['ResponseMetadata']['HTTPStatusCode'], "Something went wrong.")
-
     # Handle a request to get a patient from the database
     elif path == __base_path + 'get':
-        format_return_message(200, "Placeholder return until functionality for other lambdas is implemented.")
+        __logger.info(f'Invoked by the get endpoint. Validating request.')
+
+        try:
+            if event['queryStringParameters'] is None:
+                raise AssertionError(f'The user id must be passed as a query string parameter.')
+        except AssertionError as error:
+            __logger.error(f'An error was raised validating the request: {error}')
+            return format_return_message(400, str(error))
+
+        response = __lambda.invoke(
+            FunctionName=__user_retrieval_lambda_arn,
+            InvocationType="RequestResponse",
+            Payload=json.dumps(event['queryStringParameters']['id'])
+        )
+        __logger.info(f'Retrieval lambda returned: {response}')
+        users = json.load(response['Payload'])
+
+        if response['StatusCode'] == 200 and users is not None:
+            __logger.info(f'Retrieved {len(users)} user(s) from the database. Returning them to the user.')
+            return format_return_message(200, json.dumps(users))
+        elif response['StatusCode'] == 200 and users is None:
+            __logger.info(f'Did not find any users in the database')
+            return format_return_message(200, "No users found.")
+        else:
+            __logger.info(f'Something went wrong. Try again later.')
+            return format_return_message(500, f'Something went wrong. Try again later.')
     # Handle a request to update a patient in the database
     elif path == __base_path + 'update':
-        format_return_message(200, "Placeholder return until functionality for other lambdas is implemented.")
+        return format_return_message(200, "Placeholder return until functionality for other lambdas is implemented.")
     # Handle a request to remove a patient from the database
     elif path == __base_path + 'delete':
-        format_return_message(200, "Placeholder return until functionality for other lambdas is implemented.")
+        return format_return_message(200, "Placeholder return until functionality for other lambdas is implemented.")
     # Handle a request from an unknown endpoint
     else:
         __logger.error(f'Invoked by an unknown endpoint: {path}')
-        format_return_message(500, 'The validation lambda was invoked from an unknown endpoint.')
+        return format_return_message(500, 'The validation lambda was invoked from an unknown endpoint.')
 
 
 def dict_contains_item(check_dict: dict, item: str):
@@ -122,4 +146,3 @@ def format_return_message(status: int, body: str):
 def validate_phone_number(number: str):
     if not __regex.match(number):
         raise ValueError(f'The phone number entered is not in a valid format.')
-
