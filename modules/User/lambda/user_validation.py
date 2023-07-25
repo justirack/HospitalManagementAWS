@@ -10,6 +10,8 @@ __logger.setLevel(logging.INFO)
 
 __base_path = '/v1/user/'
 
+__updatable_information = ['user_id', 'sort_key', 'first_name', 'last_name', 'date_of_birth', 'phone_number']
+
 __lambda = boto3.client('lambda')
 __user_retrieval_lambda_arn = os.getenv('RETRIEVE_USER_LAMBDA_INVOKE_URL')
 __user_creation_lambda_arn = os.getenv('CREATE_USER_LAMBDA_INVOKE_URL')
@@ -29,9 +31,6 @@ def lambda_handler(event: dict, context: dict):
     __logger.info(f'Lambda was invoked with: {event}')
 
     path = event['path']
-    body = dict()
-    if event['body'] is not None:
-        body = json.loads(event['body'])
 
     # Handle a request to add a patient to the database
     if path == __base_path + 'add':
@@ -63,7 +62,9 @@ def add_user(event: dict):
     :return: JSON containing a status code, and string message.
     """
     __logger.info(f'Invoked by the add endpoint. Validating information in request.')
-    body = json.loads(event['body'])
+    body = dict()
+    if event['body'] is not None:
+        body = json.loads(event['body'])
 
     # Use the dict_contains_item function to make sure all required information is present in the request
     try:
@@ -92,18 +93,19 @@ def add_user(event: dict):
     )
     __logger.info(f'Creation lambda returned: {response}')
 
-    if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+    # Parse the body of the response, so it can be passed back to the user
+    response_body = json.loads(response['Payload'].read())
+
+    if response_body['statusCode'] == 200:
         # Parse the user id from the response, so it can be returned to the user
-        payload = response['Payload']
-        payload_body = json.loads(payload.read())
-        user_id = payload_body["body"]["user_id"]
+        user_id = response_body["body"]["user_id"]
 
         __logger.info(f'User was successfully added to the database. Their user ID is: {user_id}')
         return format_return_message(200, f'User was successfully added to the database. Their user ID is: {user_id}')
     # If the response code was not 200 something went wrong in the other lambda function,
     # return an error message to the user
     else:
-        return format_return_message(response['ResponseMetadata']['HTTPStatusCode'], "Something went wrong.")
+        return format_return_message(response_body['statusCode'], response_body['body'])
 
 
 def get_user(event: dict):
@@ -149,15 +151,32 @@ def update_user(event: dict):
     :return: JSON containing a status code, and a string message.
     """
     __logger.info(f'Invoked by the update endpoint. Validating request.')
-    body = json.loads(event['body'])
+    body = dict()
+    if event['body'] is not None:
+        body = json.loads(event['body'])
 
     try:
         keys = body.keys()
         __logger.info(f'Keys: {keys}')
-    except AssertionError as error:
-        pass
 
-    return format_return_message(200, "Placeholder return until functionality for other lambdas is implemented.")
+        dict_contains_item(body, 'user_id')
+        if body is None or not set(keys).issubset(set(__updatable_information)):
+            raise AssertionError(f'The contents of the request are invalid')
+
+    except AssertionError as error:
+        return format_return_message(400, str(error))
+
+    response = __lambda.invoke(
+        FunctionName=__user_update_lambda_arn,
+        InvocationType="RequestResponse",
+        Payload=event['body']
+    )
+    __logger.info(f'Update lambda returned: {response}')
+
+    response_body = json.loads(response['Payload'].read())
+    __logger.info(response_body)
+    
+    return format_return_message(response_body['statusCode'], response_body['body'])
 
 
 def dict_contains_item(check_dict: dict, item: str):

@@ -1,24 +1,61 @@
-import re
+import os
+import json
+import boto3
 import logging
-import datetime
 
 __logger = logging.getLogger()
 __logger.setLevel(logging.INFO)
 
-__regex = "^(([0-9]{10})|\([0-9]{3}\)(|\s)[0-9]{3}-[0-9]{4}|[0-9]{3}-[0-9]{3}-[0-9]{4}|[0-9]{3}\s[0-9]{3}\s[0-9]{4})$"
+__dynamodb_table_name = os.getenv('USER_TABLE_NAME')
+__dynamodb = boto3.client('dynamodb')
+
 
 def lambda_handler(event, context):
-    __logger.info(f'date: {event["date"]}')
+    __logger.info(f'Lambda was invoked with event: {event}')
+    body = json.loads(json.dumps(event))
 
-    try:
-        datetime.date.fromisoformat(event['date'])
-        __logger.info("The format is correct")
-    except ValueError:
-        __logger.info("Incorrect format")
+    payload = {}
+    keys = body.keys()
+    __logger.info(f'Payload: {payload}')
+    __logger.info(f'Keys: {keys}')
 
-    return {
-        "statusCode": 200,
-        "headers": {"Content-Type": "text/html; charset=utf-8"},
-        "body": "Success"
+    expression = 'SET'
+    values = dict()
 
-    }
+    for key in keys:
+        if key != 'user_id':
+            expression += f' {key}=:{key},'
+            values.update({
+                f':{key}': {'S': body[key]}
+            })
+    # There will be a trailing , at the end of expression, we need to remove it to avoid an error
+    expression = expression[:-1]
+
+    __logger.info(expression)
+    __logger.info(values)
+
+    response = __dynamodb.update_item(
+        TableName=__dynamodb_table_name,
+        Key={'user_id': {'S': event['user_id']}},
+        UpdateExpression=expression,
+        ExpressionAttributeValues=values
+    )
+    __logger.info(f'Received response: {response}')
+
+    if response['ResponseMetadata']['HttpStatusCode'] == 200:
+        __logger.info(f'User information was successfully updated in the database.')
+        return {
+            "statusCode": 200,
+            "headers": {"Content-Type": "text/html; charset=utf-8"},
+        }
+    # If the response code is not 200 something went wrong with DynamoDB.
+    # Return an error message to the user
+    else:
+        __logger.error(
+            f"Something went wrong updating the patient. Received status: {response['ResponseMetadata']['HTTPStatusCode']}.")
+        return {
+            "statusCode": response['ResponseMetadata']['HttpStatusCode'],
+            "headers": {"Content-Type": "text/html; charset=utf-8"},
+            "body": "Something went wrong with DynamoDB. Please try again later."
+        }
+

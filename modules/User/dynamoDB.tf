@@ -7,7 +7,7 @@ resource "aws_dynamodb_table" "the_user_table" {
   billing_mode = "PAY_PER_REQUEST"
 
   hash_key = "user_id"
-  range_key = "sort_key"
+#  range_key = "sort_key"
 
   # Defines the partition key as a string
   attribute {
@@ -16,10 +16,10 @@ resource "aws_dynamodb_table" "the_user_table" {
   }
 
   # Defines the sort key as a string
-  attribute {
-    name = "sort_key"
-    type = "S"
-  }
+#  attribute {
+#    name = "sort_key"
+#    type = "S"
+#  }
 
   point_in_time_recovery {
     enabled = true

@@ -32,6 +32,7 @@ def lambda_handler(event, context):
             'user_type': {'S': body['user_type']}
         }
     )
+    __logger.info(f'Received response: {response}')
 
     # Return a response to the validation lambda depending on the status code received from DynamoDB
     if response['ResponseMetadata']['HTTPStatusCode'] == 200:
@@ -46,7 +47,7 @@ def lambda_handler(event, context):
     # If the response code is not 200 something went wrong with DynamoDB.
     # Return an error message to the user
     else:
-        __logger.warning(
+        __logger.error(
             f"Something went wrong adding the patient. Received status: {response['ResponseMetadata']['HTTPStatusCode']}.")
         return {
             "statusCode": 500,
