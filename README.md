@@ -29,6 +29,21 @@ Sample JSON:
  "user_type": "patient"
 }
 ```
+The endpoint returns:
+- A 200 status code if the user is successfully added to the database.
+- A 400 status code if one or more parts of the request are invalid/improperly formatted.
+- A 500 status code if something goes wrong with AWS.
+
+## user/get
+The get patient endpoint expects the user id as a string query parameter. <br>
+Sample input:
+```
+id="12345678-1234-1234-123456789012"
+```
+The get endpoint returns:
+- A 200 status code and the user(s) information if the id is valid.
+- A 400 status code if the id that is passed is not valid.
+- A 500 status code if something goes wrong with AWS.
 
 
 
