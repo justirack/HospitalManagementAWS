@@ -2,10 +2,10 @@
 
 This project will re-create the project found in my HospitalManagement repository but in aws.<br>
 See original project link <a href="https://github.com/justirack/HospitalManagement">here</a> <br>
-The project will use APIGateway to create the endpoints where requests will be sent, and will be backed by lambda functions. Data will be stored in multiple dynamoDB tables, with one for each of patients, doctors and appointments respectively.
+The project will have a front-end written in react and a backend that will use API gateway as its entry point and will be backed by lambda functions. Data will be stored in DynamoDB. 
 
 # Tentative Architecture
-The following draw.io diagram contains the initial architecture diagram for patients and doctors. The diagram will be updated to include appointments once patients and doctors are complete.
+The following draw.io diagram contains the tentative architecture diagram. The diagram will be updated to include appointments once users are complete.
 
 ![Alt](images/hospital_manager_diagram.svg)
 
@@ -37,7 +37,7 @@ The endpoint returns:
 ## user/get
 The get patient endpoint expects the user id as a string query parameter. <br>
 Sample input:
-```json
+```text
 id="12345678-1234-1234-123456789012"
 ```
 The get endpoint returns:
