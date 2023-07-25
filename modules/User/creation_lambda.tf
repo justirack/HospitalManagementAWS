@@ -46,13 +46,6 @@ resource "aws_iam_role_policy_attachment" "the_user_creation_lambda_execution_ro
   role       = aws_iam_role.the_user_creation_lambda_role.name
 }
 
-resource "aws_lambda_event_source_mapping" "user_creation" {
-  event_source_arn                   = aws_sqs_queue.the_create_user_queue.arn
-  function_name                      = aws_lambda_function.the_user_creation_lambda_function.function_name
-  batch_size                         = 10000
-  maximum_batching_window_in_seconds = 10
-}
-
 # -----------------------------------------------
 # Module Data
 

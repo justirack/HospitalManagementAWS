@@ -1,7 +1,9 @@
 import os
+import re
 import json
 import boto3
 import logging
+import datetime
 
 __logger = logging.getLogger()
 __logger.setLevel(logging.INFO)
@@ -14,6 +16,8 @@ __user_creation_lambda_arn = os.getenv('CREATE_USER_LAMBDA_INVOKE_URL')
 __user_update_lambda_arn = os.getenv('UPDATE_USER_LAMBDA_INVOKE_URL')
 __user_deletion_lambda_arn = os.getenv('DELETE_USER_LAMBDA_INVOKE_URL')
 
+__regex = re.compile("^(([0-9]{10})|\([0-9]{3}\)(|\s)[0-9]{3}-[0-9]{4}|[0-9]{3}-[0-9]{3}-[0-9]{4}|[0-9]{3}\s[0-9]{3}\s[0-9]{4})$")
+
 
 def lambda_handler(event: dict, context: dict):
     """
@@ -25,7 +29,7 @@ def lambda_handler(event: dict, context: dict):
     __logger.info(f'Lambda was invoked with: {event}')
 
     path = event['path']
-    body = event['body']
+    body = json.loads(event['body'])
 
     # Handle a request to add a patient to the database
     if path == __base_path + 'add':
@@ -38,9 +42,15 @@ def lambda_handler(event: dict, context: dict):
             dict_contains_item(body, 'date_of_birth')
             dict_contains_item(body, 'phone_number')
             dict_contains_item(body, 'user_type')
+
+            validate_phone_number(body['phone_number'])
+            datetime.date.fromisoformat(body['date_of_birth'])
         # If something is missing an error will be raised, catch it and return an error message to the user
         except AssertionError as error:
             __logger.error(f'An error was raised validating the contents of the request: {error}')
+            return format_return_message(400, str(error))
+        except ValueError as error:
+            __logger.error(str(error))
             return format_return_message(400, str(error))
 
         # Invoke the creation lambda function. This will create a new record in the database.
@@ -107,3 +117,9 @@ def format_return_message(status: int, body: str):
         "statusCode": status,
         "headers": {"Content-Type": "text/html; charset=utf-8"},
         "body": body}
+
+
+def validate_phone_number(number: str):
+    if not __regex.match(number):
+        raise ValueError(f'The phone number entered is not in a valid format.')
+
