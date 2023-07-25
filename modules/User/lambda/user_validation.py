@@ -74,6 +74,7 @@ def lambda_handler(event: dict, context: dict):
         # return an error message to the user
         else:
             return format_return_message(response['ResponseMetadata']['HTTPStatusCode'], "Something went wrong.")
+
     # Handle a request to get a patient from the database
     elif path == __base_path + 'get':
         __logger.info(f'Invoked by the get endpoint. Validating request.')
@@ -102,12 +103,15 @@ def lambda_handler(event: dict, context: dict):
         else:
             __logger.info(f'Something went wrong. Try again later.')
             return format_return_message(500, f'Something went wrong. Try again later.')
+
     # Handle a request to update a patient in the database
     elif path == __base_path + 'update':
         return format_return_message(200, "Placeholder return until functionality for other lambdas is implemented.")
+
     # Handle a request to remove a patient from the database
     elif path == __base_path + 'delete':
         return format_return_message(200, "Placeholder return until functionality for other lambdas is implemented.")
+
     # Handle a request from an unknown endpoint
     else:
         __logger.error(f'Invoked by an unknown endpoint: {path}')
