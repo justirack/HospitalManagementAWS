@@ -55,7 +55,7 @@ The update patient endpoint expects a user ID and any **subset** of the followin
 Sample JSON:
 ```
 {
- "user_id": "12345678-1234-1234-123456789012"
+ "user_id": "12345678-1234-1234-123456789012",
  "first_name": "John",
  "last_name": "Thompson",
  "date_of_birth": "2003-01-19",
