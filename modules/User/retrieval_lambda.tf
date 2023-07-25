@@ -14,7 +14,7 @@ resource "aws_lambda_function" "the_user_retrieval_lambda_function" {
 
   environment {
     variables = {
-      user_TABLE_NAME = aws_dynamodb_table.the_user_table.name
+      USER_TABLE_NAME = aws_dynamodb_table.the_user_table.name
     }
   }
 
