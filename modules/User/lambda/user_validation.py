@@ -10,7 +10,7 @@ __logger.setLevel(logging.INFO)
 
 __base_path = '/v1/user/'
 
-__updatable_information = ['user_id', 'sort_key', 'first_name', 'last_name', 'date_of_birth', 'phone_number']
+__updatable_information = ['user_id', 'first_name', 'last_name', 'date_of_birth', 'phone_number']
 
 __lambda = boto3.client('lambda')
 __user_retrieval_lambda_arn = os.getenv('RETRIEVE_USER_LAMBDA_INVOKE_URL')
@@ -175,7 +175,7 @@ def update_user(event: dict):
 
     response_body = json.loads(response['Payload'].read())
     __logger.info(response_body)
-    
+
     return format_return_message(response_body['statusCode'], response_body['body'])
 
 

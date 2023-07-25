@@ -17,14 +17,12 @@ def lambda_handler(event, context):
 
     # Create the partition and sort keys for the new DynamoDB entry
     user_id = str(uuid.uuid4())
-    sort_key = body['first_name'][0] + body['last_name'][0] + body['date_of_birth']
 
     # Make a call to DynamoDB attempting to add the user
     response = __dynamodb.put_item(
         TableName=__dynamodb_table_name,
         Item={
             'user_id': {'S': user_id},
-            'sort_key': {'S': sort_key},
             'first_name': {'S': body['first_name']},
             'last_name': {'S': body['last_name']},
             'date_of_birth': {'S': body['date_of_birth']},

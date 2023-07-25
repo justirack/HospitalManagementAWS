@@ -42,11 +42,12 @@ def lambda_handler(event, context):
     )
     __logger.info(f'Received response: {response}')
 
-    if response['ResponseMetadata']['HttpStatusCode'] == 200:
+    if response['ResponseMetadata']['HTTPStatusCode'] == 200:
         __logger.info(f'User information was successfully updated in the database.')
         return {
             "statusCode": 200,
             "headers": {"Content-Type": "text/html; charset=utf-8"},
+            "body": "Success"
         }
     # If the response code is not 200 something went wrong with DynamoDB.
     # Return an error message to the user
@@ -54,7 +55,7 @@ def lambda_handler(event, context):
         __logger.error(
             f"Something went wrong updating the patient. Received status: {response['ResponseMetadata']['HTTPStatusCode']}.")
         return {
-            "statusCode": response['ResponseMetadata']['HttpStatusCode'],
+            "statusCode": response['ResponseMetadata']['HTTPStatusCode'],
             "headers": {"Content-Type": "text/html; charset=utf-8"},
             "body": "Something went wrong with DynamoDB. Please try again later."
         }

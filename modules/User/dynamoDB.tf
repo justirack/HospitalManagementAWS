@@ -15,12 +15,6 @@ resource "aws_dynamodb_table" "the_user_table" {
     type = "S"
   }
 
-  # Defines the sort key as a string
-#  attribute {
-#    name = "sort_key"
-#    type = "S"
-#  }
-
   point_in_time_recovery {
     enabled = true
   }
