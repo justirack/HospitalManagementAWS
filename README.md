@@ -45,6 +45,28 @@ The get endpoint returns:
 - A 400 status code if the id that is passed is not valid.
 - A 500 status code if something goes wrong with AWS.
 
+## user/update
+The update patient endpoint expects a user ID and any **subset** of the following:
+- First name
+- Last name
+- Date of birth (yyyy-mm-dd)
+- Phone number (xxx)xxx-xxxx
+
+Sample JSON:
+```
+{
+ "user_id": "12345678-1234-1234-123456789012"
+ "first_name": "John",
+ "last_name": "Thompson",
+ "date_of_birth": "2003-01-19",
+ "phone_number": "(987)654-3210",
+}
+
+```
+The update endpoint returns:
+- A 200 status code if the user's information is successfully updated in the database
+- A 400 status code if one or more parts of the request are invalid/improperly formatted.
+- A 500 status code if something goes wrong with AWS.
 
 
 
