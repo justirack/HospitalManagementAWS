@@ -46,7 +46,7 @@ The get endpoint returns:
 - A 500 status code if something goes wrong with AWS.
 
 ## user/update
-The update patient endpoint expects a user ID and any **subset** of the following:
+The update patient endpoint expects a user ID and any **subset** of the following, and only the received values will be updated:
 - First name
 - Last name
 - Date of birth (yyyy-mm-dd)
@@ -72,50 +72,4 @@ The update endpoint returns:
 
 
 
-## patient/add
-The add patient endpoint expects the patients first name, last name and date of birth in <code>yyyy-mm-dd</code> format as the body of the request.<br>
-See sample JSON below:
- 
-``` json
-{
-  "first_name":"Justin",
-  "last_name":"Rackley",
-  "date_of_birth":"2002-02-09"
-}
-```
 
-## patient/get
-The get patient endpoint expects the patients id ad a query parameter in the following format.<br>
-```
-{
-  id="12345678-1234-1234-123456789012"
-}
-```
-
-## patient/update
-The update endpoint expects the patient id along with any combination of the patients first name, last name or date of birth in the <code>yyyy-mm-dd</code> format as the body of the request. Whatever data is passed will be updated and used as the new values in the database<br>
-See sample JSON blobs below:
-
-``` json
-{
-  "id":"1234",
-  "first_name":"Justin"
-}
-```
-
-``` json
-{
-  "id":"1234",
-  "last_name":"Rackley",
-  "date_of_birth":"2002-02-09"
-}
-```
-
-``` json
-{
-  "id":"1234",
-  "first_name":"Justin",
-  "last_name":"Rackley",
-  "date_of_birth":"2002-02-09"
-}
-```
