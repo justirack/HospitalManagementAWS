@@ -2,6 +2,8 @@ import boto3
 import os
 import logging
 
+from typing import Union
+
 __dynamodb_table_name = os.getenv('USER_TABLE_NAME')
 __dynamodb = boto3.client('dynamodb')
 
@@ -9,11 +11,11 @@ __logger = logging.getLogger()
 __logger.setLevel(logging.INFO)
 
 
-def lambda_handler(event, context):
+def lambda_handler(event: str, context: dict) -> Union[None, list]:
     __logger.info(f'Lambda was invoked with the event: {event}')
-    user_id = event
+    user_id: str = event
 
-    response = __dynamodb.query(
+    response: dict = __dynamodb.query(
         TableName=__dynamodb_table_name,
         KeyConditionExpression='user_id = :user_id',
         ExpressionAttributeValues={
@@ -28,7 +30,7 @@ def lambda_handler(event, context):
         return None
 
     # Add all users to a list to return them
-    users = list()
+    users: list = list()
     for user in response['Items']:
         users.append({
             "first_name": user['first_name']['S'],

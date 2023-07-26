@@ -22,7 +22,8 @@ __user_deletion_lambda_arn = os.getenv('DELETE_USER_LAMBDA_INVOKE_URL')
 
 __REQUEST_RESPONSE_INVOCATION_TYPE = 'RequestResponse'
 
-def lambda_handler(event: dict, context: dict):
+
+def lambda_handler(event: dict, context: dict) -> dict:
     """
     The event handler/entrypoint for this lambda.
 
@@ -65,7 +66,7 @@ def add_user(event: dict) -> dict:
     __logger.info(f'Invoked by the add endpoint. Validating information in request.')
     body: dict = dict()
     if event['body'] is not None:
-        body = json.loads(event['body'])
+        body: dict = json.loads(event['body'])
 
     # Use the dict_contains_item function to make sure all required information is present in the request
     try:
@@ -88,8 +89,8 @@ def add_user(event: dict) -> dict:
     # Invoke the creation lambda function. This will create a new record in the database.
     __logger.info(f'All required information is present. Adding patient to database.')
     response: dict = invoke_lambda(__user_creation_lambda_arn,
-                             __REQUEST_RESPONSE_INVOCATION_TYPE,
-                             event['body'])
+                                   __REQUEST_RESPONSE_INVOCATION_TYPE,
+                                   event['body'])
     __logger.info(f'Creation lambda returned: {response}')
 
     # Parse the body of the response, so it can be passed back to the user
@@ -124,8 +125,8 @@ def get_user(event: dict) -> dict:
         return format_return_message(400, str(error))
 
     response: dict = invoke_lambda(__user_retrieval_lambda_arn,
-                             __REQUEST_RESPONSE_INVOCATION_TYPE,
-                             json.dumps(event['queryStringParameters']['id']))
+                                   __REQUEST_RESPONSE_INVOCATION_TYPE,
+                                   json.dumps(event['queryStringParameters']['id']))
 
     __logger.info(f'Retrieval lambda returned: {response}')
     users: dict = json.load(response['Payload'])
@@ -151,7 +152,7 @@ def update_user(event: dict) -> dict:
     __logger.info(f'Invoked by the update endpoint. Validating request.')
     body: dict = dict()
     if event['body'] is not None:
-        body = json.loads(event['body'])
+        body: dict = json.loads(event['body'])
 
     try:
         keys = body.keys()
@@ -165,8 +166,8 @@ def update_user(event: dict) -> dict:
         return format_return_message(400, str(error))
 
     response: dict = invoke_lambda(__user_update_lambda_arn,
-                             __REQUEST_RESPONSE_INVOCATION_TYPE,
-                             event['body'])
+                                   __REQUEST_RESPONSE_INVOCATION_TYPE,
+                                   event['body'])
 
     __logger.info(f'Update lambda returned: {response}')
 

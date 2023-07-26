@@ -11,15 +11,15 @@ __dynamodb_table_name = os.getenv('USER_TABLE_NAME')
 __dynamodb = boto3.client('dynamodb')
 
 
-def lambda_handler(event, context):
+def lambda_handler(event: dict, context: dict) -> dict:
     __logger.info(f'Lambda was invoked with event: {event}')
-    body = json.loads(json.dumps(event))
+    body: dict = json.loads(json.dumps(event))
 
     # Create the partition and sort keys for the new DynamoDB entry
-    user_id = str(uuid.uuid4())
+    user_id: str = str(uuid.uuid4())
 
     # Make a call to DynamoDB attempting to add the user
-    response = __dynamodb.put_item(
+    response: dict = __dynamodb.put_item(
         TableName=__dynamodb_table_name,
         Item={
             'user_id': {'S': user_id},
