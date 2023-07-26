@@ -7,17 +7,11 @@ resource "aws_dynamodb_table" "the_user_table" {
   billing_mode = "PAY_PER_REQUEST"
 
   hash_key = "user_id"
-  range_key = "sort_key"
+#  range_key = "sort_key"
 
   # Defines the partition key as a string
   attribute {
     name = "user_id"
-    type = "S"
-  }
-
-  # Defines the sort key as a string
-  attribute {
-    name = "sort_key"
     type = "S"
   }
 
