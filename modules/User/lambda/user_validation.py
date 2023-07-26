@@ -182,6 +182,12 @@ def update_user(event: dict) -> dict:
 
 
 def delete_user(event: dict) -> dict:
+    """
+    Validates a request to the delete endpoint, then deletes a users' information from the database.
+
+    :param event: The event that contains the user id of the user that is to be deleted.
+    :return: JSON containing a status code, and a string message.
+    """
     __logger.info(f'Invoked by the delete endpoint. Validating request.')
 
     body: dict = dict()
@@ -211,6 +217,14 @@ def delete_user(event: dict) -> dict:
 
 
 def invoke_lambda(func_name:str, invocation_type:str, payload:Union[dict, str]) -> dict:
+    """
+    Invokes another lambda function using boto3.
+
+    :param func_name: The name of the function to be invoked.
+    :param invocation_type: The type of invocation. Will typically be RequestResponse.
+    :param payload: The body of the request to the other lambda.
+    :return: The dict that is returned from the invoked lambda
+    """
     return __lambda.invoke(
         FunctionName=func_name,
         InvocationType=invocation_type,

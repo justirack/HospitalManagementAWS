@@ -12,6 +12,11 @@ __dynamodb = boto3.client('dynamodb')
 
 
 def lambda_handler(event: dict, context: dict) -> dict:
+    """
+    The event handler/entrypoint for this lambda.
+
+    The lambda will add a user to the DynamoDB database.
+    """
     __logger.info(f'Lambda was invoked with event: {event}')
     body: dict = json.loads(json.dumps(event))
 
@@ -35,20 +40,26 @@ def lambda_handler(event: dict, context: dict) -> dict:
     # Return a response to the validation lambda depending on the status code received from DynamoDB
     if response['ResponseMetadata']['HTTPStatusCode'] == 200:
         __logger.info("Patient was successfully added to database")
-        return {
-            "statusCode": 200,
-            "headers": {"Content-Type": "text/html; charset=utf-8"},
-            "body": {
-                'user_id': user_id
-            }
-        }
+        return format_return_message(200, user_id)
     # If the response code is not 200 something went wrong with DynamoDB.
     # Return an error message to the user
     else:
         __logger.error(
             f"Something went wrong adding the patient. Received status: {response['ResponseMetadata']['HTTPStatusCode']}.")
-        return {
-            "statusCode": 500,
-            "headers": {"Content-Type": "text/html; charset=utf-8"},
-            "body": "Something went wrong with DynamoDB. Please try again later."
-        }
+        return format_return_message(response['ResponseMetadata']['HTTPStatusCode'],
+                                     "Something went wrong with DynamoDB. Please try again later.")
+
+
+def format_return_message(status: int, body: str) -> dict:
+    """
+    Formats a return json for the lambda function.
+
+    :param status: The status code integer of the response.
+    :param body: The string body of the response.
+    :return: A json blob that can be returned from the lambda function.
+    """
+
+    return {
+        "statusCode": status,
+        "headers": {"Content-Type": "text/html; charset=utf-8"},
+        "body": body}

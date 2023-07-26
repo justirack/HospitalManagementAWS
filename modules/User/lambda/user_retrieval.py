@@ -12,6 +12,11 @@ __logger.setLevel(logging.INFO)
 
 
 def lambda_handler(event: str, context: dict) -> Union[None, list]:
+    """
+    The event handler/entrypoint for this lambda.
+
+    The lambda will retrieve a user from the DynamoDB database.
+    """
     __logger.info(f'Lambda was invoked with the event: {event}')
     user_id: str = event
 

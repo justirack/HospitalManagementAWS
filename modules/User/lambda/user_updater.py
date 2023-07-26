@@ -11,6 +11,11 @@ __dynamodb = boto3.client('dynamodb')
 
 
 def lambda_handler(event: dict, context: dict) -> dict:
+    """
+    The event handler/entrypoint for this lambda.
+
+    The lambda will update a user in the DynamoDB database.
+    """
     __logger.info(f'Lambda was invoked with event: {event}')
     body: dict = json.loads(json.dumps(event))
 
@@ -50,9 +55,20 @@ def lambda_handler(event: dict, context: dict) -> dict:
     else:
         __logger.error(
             f"Something went wrong updating the patient. Received status: {response['ResponseMetadata']['HTTPStatusCode']}.")
-        return {
-            "statusCode": response['ResponseMetadata']['HTTPStatusCode'],
-            "headers": {"Content-Type": "text/html; charset=utf-8"},
-            "body": "Something went wrong with DynamoDB. Please try again later."
-        }
+        return format_return_message(response['ResponseMetadata']['HTTPStatusCode'],
+                                     "Something went wrong with DynamoDB. Please try again later.")
 
+
+def format_return_message(status: int, body: str) -> dict:
+    """
+    Formats a return json for the lambda function.
+
+    :param status: The status code integer of the response.
+    :param body: The string body of the response.
+    :return: A json blob that can be returned from the lambda function.
+    """
+
+    return {
+        "statusCode": status,
+        "headers": {"Content-Type": "text/html; charset=utf-8"},
+        "body": body}
