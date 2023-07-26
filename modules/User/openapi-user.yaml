@@ -1,0 +1,52 @@
+openapi: 3.0.1
+info:
+  title: ${title}
+  description: ${description}
+  version: ${version}
+servers:
+  - url: ${invoke_url}
+paths:
+  ${add_path}:
+    post:
+      description: ${add_description}
+      responses:
+        "200":
+          description: "The user was successfully added to the table."
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri: ${user_validation_lambda_invoke_arn}
+        credentials: ${user_validation_lambda_invoke_role_arn}
+  ${retrieve_path}:
+    get:
+      description: ${retrieve_description}
+      responses:
+        '200':
+          description: "The user was retrieved."
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri: ${user_validation_lambda_invoke_arn}
+        credentials: ${user_validation_lambda_invoke_role_arn}
+  ${update_path}:
+    put:
+      description: ${update_description}
+      responses:
+        "200":
+          description: "The user was successfully updated to the table."
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri: ${user_validation_lambda_invoke_arn}
+        credentials: ${user_validation_lambda_invoke_role_arn}
+  ${delete_path}:
+    delete:
+      description: ${update_description}
+      responses:
+        "200":
+          description: "The user was successfully updated to the table."
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri: ${user_validation_lambda_invoke_arn}
+        credentials: ${user_validation_lambda_invoke_role_arn}

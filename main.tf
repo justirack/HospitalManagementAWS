@@ -25,3 +25,12 @@ module "patient_module" {
   python_runtime = "python3.9"
   sqs_max_receive_count = 10
 }
+
+module "user_module" {
+  source = "./modules/User"
+
+  # Variables
+  user-prefix = "user-"
+  python-runtime = "python3.9"
+  sqs_max_receive_count = 10
+}
