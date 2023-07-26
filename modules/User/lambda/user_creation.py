@@ -4,6 +4,8 @@ import uuid
 import boto3
 import logging
 
+from typing import Union
+
 __logger = logging.getLogger()
 __logger.setLevel(logging.INFO)
 
@@ -40,7 +42,7 @@ def lambda_handler(event: dict, context: dict) -> dict:
     # Return a response to the validation lambda depending on the status code received from DynamoDB
     if response['ResponseMetadata']['HTTPStatusCode'] == 200:
         __logger.info("Patient was successfully added to database")
-        return format_return_message(200, user_id)
+        return format_return_message(200, {'user_id': user_id})
     # If the response code is not 200 something went wrong with DynamoDB.
     # Return an error message to the user
     else:
@@ -50,7 +52,7 @@ def lambda_handler(event: dict, context: dict) -> dict:
                                      "Something went wrong with DynamoDB. Please try again later.")
 
 
-def format_return_message(status: int, body: str) -> dict:
+def format_return_message(status: int, body: Union[str, dict]) -> dict:
     """
     Formats a return json for the lambda function.
 
