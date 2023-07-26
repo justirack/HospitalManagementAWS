@@ -17,15 +17,6 @@ provider "aws" {
 
 # --------------------------------------------------
 # :: Module calls
-module "patient_module" {
-  source = "./modules/patient"
-
-  # Variables
-  patient-prefix = "patient-"
-  python_runtime = "python3.9"
-  sqs_max_receive_count = 10
-}
-
 module "user_module" {
   source = "./modules/User"
 
