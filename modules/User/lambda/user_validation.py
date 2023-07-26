@@ -48,7 +48,7 @@ def lambda_handler(event: dict, context: dict) -> dict:
 
     # Handle a request to remove a patient from the database
     elif path == __base_path + 'delete':
-        return format_return_message(200, "Placeholder return until functionality for other lambdas is implemented.")
+        return delete_user(event)
 
     # Handle a request from an unknown endpoint
     else:
@@ -96,6 +96,7 @@ def add_user(event: dict) -> dict:
     # Parse the body of the response, so it can be passed back to the user
     response_body: dict = json.loads(response['Payload'].read())
 
+    # Return different responses to the user depending on what the retrieval lambda returned
     if response_body['statusCode'] == 200:
         # Parse the user id from the response, so it can be returned to the user
         user_id: str = response_body["body"]["user_id"]
@@ -117,6 +118,7 @@ def get_user(event: dict) -> dict:
     """
     __logger.info(f'Invoked by the get endpoint. Validating request.')
 
+    # Validate that the user passed in a user id in the request
     try:
         if event['queryStringParameters'] is None:
             raise AssertionError(f'The user id must be passed as a query string parameter.')
@@ -131,6 +133,7 @@ def get_user(event: dict) -> dict:
     __logger.info(f'Retrieval lambda returned: {response}')
     users: dict = json.load(response['Payload'])
 
+    # Return different responses to the user depending on what the retrieval lambda returned
     if response['StatusCode'] == 200 and users is not None:
         __logger.info(f'Retrieved {len(users)} user(s) from the database. Returning them to the user.')
         return format_return_message(200, json.dumps(users))
@@ -154,7 +157,9 @@ def update_user(event: dict) -> dict:
     if event['body'] is not None:
         body: dict = json.loads(event['body'])
 
+    # Validate the information the user passed
     try:
+        # Get everything that the user is asking to update
         keys = body.keys()
         __logger.info(f'Keys: {keys}')
 
@@ -165,6 +170,7 @@ def update_user(event: dict) -> dict:
     except AssertionError as error:
         return format_return_message(400, str(error))
 
+    # Invoke the update lambda to attempt to update the user information
     response: dict = invoke_lambda(__user_update_lambda_arn,
                                    __REQUEST_RESPONSE_INVOCATION_TYPE,
                                    event['body'])
@@ -172,13 +178,36 @@ def update_user(event: dict) -> dict:
     __logger.info(f'Update lambda returned: {response}')
 
     response_body: dict = json.loads(response['Payload'].read())
-    __logger.info(response_body)
-
     return format_return_message(response_body['statusCode'], response_body['body'])
 
 
 def delete_user(event: dict) -> dict:
-    pass
+    __logger.info(f'Invoked by the delete endpoint. Validating request.')
+
+    body: dict = dict()
+    if event['body'] is not None:
+        body: dict = json.loads(event['body'])
+
+    # Validate the information the user passed
+    try:
+        dict_contains_item(body, 'user_id')
+    except AssertionError as error:
+        return format_return_message(400, str(error))
+
+    # Invoke the deletion lambda to attempt to delete the user
+    response: dict = invoke_lambda(__user_deletion_lambda_arn,
+                                   __REQUEST_RESPONSE_INVOCATION_TYPE,
+                                   event['body'])
+    __logger.info(f'Deletion lambda returned: {response}')
+
+    # Parse the boto3 object to get the actual response payload
+    response_body: dict = json.loads(response['Payload'].read())
+
+    # Return a response to the user, depending on what status code is returned
+    if response_body['statusCode'] == 200:
+        return format_return_message(200, f'The user with the ID {response_body["body"]} was deleted successfully.')
+    else:
+        return format_return_message(response_body['statusCode'], response_body['body'])
 
 
 def invoke_lambda(func_name:str, invocation_type:str, payload:Union[dict, str]) -> dict:
