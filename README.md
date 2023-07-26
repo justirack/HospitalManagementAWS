@@ -35,7 +35,7 @@ The endpoint returns:
 - A 500 status code if something goes wrong with AWS.
 
 ## user/get
-The get patient endpoint expects the user id as a string query parameter. <br>
+The get user endpoint expects the user id as a string query parameter. <br>
 Sample input:
 ```text
 id="12345678-1234-1234-123456789012"
@@ -46,7 +46,7 @@ The get endpoint returns:
 - A 500 status code if something goes wrong with AWS.
 
 ## user/update
-The update patient endpoint expects a user ID and any **subset** of the following, and only the received values will be updated:
+The update user endpoint expects a user ID and any **subset** of the following, and only the received values will be updated:
 - First name
 - Last name
 - Date of birth (yyyy-mm-dd)
@@ -64,11 +64,22 @@ Sample JSON:
 
 ```
 The update endpoint returns:
-- A 200 status code if the user's information is successfully updated in the database
+- A 200 status code if the user's information is successfully updated in the database.
 - A 400 status code if one or more parts of the request are invalid/improperly formatted.
 - A 500 status code if something goes wrong with AWS.
 
-
+## user/delete
+The delete user endpoint expects a user ID in the body of the request, and will delete the user with that ID from the database.<be>
+Sample JSON:
+```json
+{
+    "user_id": "12345678-1234-1234-123456789012"
+}
+```
+The delete endpoint returns:
+- A 200 status code if the user's information is successfully deleted from the database.
+- A 400 status code if a user ID is not passed, or something else is wrong with the request.
+- A 500 status code if something goes wrong with AWS.
 
 
 
