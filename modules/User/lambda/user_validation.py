@@ -5,12 +5,14 @@ import boto3
 import logging
 import datetime
 
+from typing import Union
+
 __logger = logging.getLogger()
 __logger.setLevel(logging.INFO)
 
 __base_path = '/v1/user/'
-
 __updatable_information = ['user_id', 'first_name', 'last_name', 'date_of_birth', 'phone_number']
+__regex = re.compile("^(([0-9]{10})|\([0-9]{3}\)(|\s)[0-9]{3}-[0-9]{4}|[0-9]{3}-[0-9]{3}-[0-9]{4}|[0-9]{3}\s[0-9]{3}\s[0-9]{4})$")
 
 __lambda = boto3.client('lambda')
 __user_retrieval_lambda_arn = os.getenv('RETRIEVE_USER_LAMBDA_INVOKE_URL')
@@ -18,8 +20,7 @@ __user_creation_lambda_arn = os.getenv('CREATE_USER_LAMBDA_INVOKE_URL')
 __user_update_lambda_arn = os.getenv('UPDATE_USER_LAMBDA_INVOKE_URL')
 __user_deletion_lambda_arn = os.getenv('DELETE_USER_LAMBDA_INVOKE_URL')
 
-__regex = re.compile("^(([0-9]{10})|\([0-9]{3}\)(|\s)[0-9]{3}-[0-9]{4}|[0-9]{3}-[0-9]{3}-[0-9]{4}|[0-9]{3}\s[0-9]{3}\s[0-9]{4})$")
-
+__REQUEST_RESPONSE_INVOCATION_TYPE = 'RequestResponse'
 
 def lambda_handler(event: dict, context: dict):
     """
@@ -30,7 +31,7 @@ def lambda_handler(event: dict, context: dict):
     """
     __logger.info(f'Lambda was invoked with: {event}')
 
-    path = event['path']
+    path: str = event['path']
 
     # Handle a request to add a patient to the database
     if path == __base_path + 'add':
@@ -54,7 +55,7 @@ def lambda_handler(event: dict, context: dict):
         return format_return_message(500, 'The validation lambda was invoked from an unknown endpoint.')
 
 
-def add_user(event: dict):
+def add_user(event: dict) -> dict:
     """
     Validates that the request contains all required information, then adds a new user to the database.
 
@@ -62,7 +63,7 @@ def add_user(event: dict):
     :return: JSON containing a status code, and string message.
     """
     __logger.info(f'Invoked by the add endpoint. Validating information in request.')
-    body = dict()
+    body: dict = dict()
     if event['body'] is not None:
         body = json.loads(event['body'])
 
@@ -86,19 +87,17 @@ def add_user(event: dict):
 
     # Invoke the creation lambda function. This will create a new record in the database.
     __logger.info(f'All required information is present. Adding patient to database.')
-    response = __lambda.invoke(
-        FunctionName=__user_creation_lambda_arn,
-        InvocationType="RequestResponse",
-        Payload=event['body']
-    )
+    response: dict = invoke_lambda(__user_creation_lambda_arn,
+                             __REQUEST_RESPONSE_INVOCATION_TYPE,
+                             event['body'])
     __logger.info(f'Creation lambda returned: {response}')
 
     # Parse the body of the response, so it can be passed back to the user
-    response_body = json.loads(response['Payload'].read())
+    response_body: dict = json.loads(response['Payload'].read())
 
     if response_body['statusCode'] == 200:
         # Parse the user id from the response, so it can be returned to the user
-        user_id = response_body["body"]["user_id"]
+        user_id: str = response_body["body"]["user_id"]
 
         __logger.info(f'User was successfully added to the database. Their user ID is: {user_id}')
         return format_return_message(200, f'User was successfully added to the database. Their user ID is: {user_id}')
@@ -108,7 +107,7 @@ def add_user(event: dict):
         return format_return_message(response_body['statusCode'], response_body['body'])
 
 
-def get_user(event: dict):
+def get_user(event: dict) -> dict:
     """
     Validates a request to the get endpoint, then retrieves a user from the database.
 
@@ -124,13 +123,12 @@ def get_user(event: dict):
         __logger.error(f'An error was raised validating the request: {error}')
         return format_return_message(400, str(error))
 
-    response = __lambda.invoke(
-        FunctionName=__user_retrieval_lambda_arn,
-        InvocationType="RequestResponse",
-        Payload=json.dumps(event['queryStringParameters']['id'])
-    )
+    response: dict = invoke_lambda(__user_retrieval_lambda_arn,
+                             __REQUEST_RESPONSE_INVOCATION_TYPE,
+                             json.dumps(event['queryStringParameters']['id']))
+
     __logger.info(f'Retrieval lambda returned: {response}')
-    users = json.load(response['Payload'])
+    users: dict = json.load(response['Payload'])
 
     if response['StatusCode'] == 200 and users is not None:
         __logger.info(f'Retrieved {len(users)} user(s) from the database. Returning them to the user.')
@@ -143,7 +141,7 @@ def get_user(event: dict):
         return format_return_message(response['StatusCode'], f'Something went wrong. Try again later.')
 
 
-def update_user(event: dict):
+def update_user(event: dict) -> dict:
     """
     Validates a request to the update endpoint, then updates a users' information in the database.
 
@@ -151,7 +149,7 @@ def update_user(event: dict):
     :return: JSON containing a status code, and a string message.
     """
     __logger.info(f'Invoked by the update endpoint. Validating request.')
-    body = dict()
+    body: dict = dict()
     if event['body'] is not None:
         body = json.loads(event['body'])
 
@@ -166,17 +164,28 @@ def update_user(event: dict):
     except AssertionError as error:
         return format_return_message(400, str(error))
 
-    response = __lambda.invoke(
-        FunctionName=__user_update_lambda_arn,
-        InvocationType="RequestResponse",
-        Payload=event['body']
-    )
+    response: dict = invoke_lambda(__user_update_lambda_arn,
+                             __REQUEST_RESPONSE_INVOCATION_TYPE,
+                             event['body'])
+
     __logger.info(f'Update lambda returned: {response}')
 
-    response_body = json.loads(response['Payload'].read())
+    response_body: dict = json.loads(response['Payload'].read())
     __logger.info(response_body)
 
     return format_return_message(response_body['statusCode'], response_body['body'])
+
+
+def delete_user(event: dict) -> dict:
+    pass
+
+
+def invoke_lambda(func_name:str, invocation_type:str, payload:Union[dict, str]) -> dict:
+    return __lambda.invoke(
+        FunctionName=func_name,
+        InvocationType=invocation_type,
+        Payload=payload
+    )
 
 
 def dict_contains_item(check_dict: dict, item: str):
@@ -193,7 +202,7 @@ def dict_contains_item(check_dict: dict, item: str):
         raise AssertionError(f'The request must contain {item} in order to be processed successfully.')
 
 
-def format_return_message(status: int, body: str):
+def format_return_message(status: int, body: str) -> dict:
     """
     Formats a return json for the lambda function.
 
@@ -208,7 +217,7 @@ def format_return_message(status: int, body: str):
         "body": body}
 
 
-def validate_phone_number(number: str):
+def validate_phone_number(number: str) -> None:
     """
     Uses a regex to ensure that a passed phone number is of a valid format.
 
