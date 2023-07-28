@@ -14,7 +14,12 @@ resource "aws_lambda_function" "the_user_options_lambda_function" {
 
   environment {
     variables = {
-      USER_TABLE_NAME = aws_dynamodb_table.the_user_table.name
+      CREATE_USER_QUEUE_URL           = aws_sqs_queue.the_create_user_queue.url
+      UPDATE_USER_QUEUE_URL           = aws_sqs_queue.the_update_user_queue.url
+      RETRIEVE_USER_LAMBDA_INVOKE_URL = aws_lambda_function.the_user_retrieval_lambda_function.arn
+      CREATE_USER_LAMBDA_INVOKE_URL   = aws_lambda_function.the_user_creation_lambda_function.arn
+      UPDATE_USER_LAMBDA_INVOKE_URL   = aws_lambda_function.the_user_updater_lambda_function.arn
+      DELETE_USER_LAMBDA_INVOKE_URL   = aws_lambda_function.the_user_deletion_lambda_function.arn
     }
   }
 
@@ -55,25 +60,39 @@ data "aws_iam_policy_document" "the_user_options_lambda_execution_policy_documen
     effect = "Allow"
 
     actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:PutLogEvents"
-    ]
-
-    resources = ["arn:aws:logs:*"]
-  }
-
-  statement {
-    effect = "Allow"
-
-    # This permission will need to be changed
-    actions = [
-      "dynamodb:*"
+      "logs:*",
+      "lambda:*"
     ]
 
     resources = [
-      aws_dynamodb_table.the_user_table.arn,
-      "${aws_dynamodb_table.the_user_table.arn}/*"
+      "arn:aws:logs:*",
+      "arn:aws:lambda:*"
+    ]
+  }
+
+  statement {
+    effect  = "Allow"
+    actions = [
+      "sqs:SendMessage"
+    ]
+
+    resources = [
+      aws_sqs_queue.the_create_user_queue.arn,
+      "${aws_sqs_queue.the_create_user_queue.arn}/*",
+      aws_sqs_queue.the_update_user_queue.arn,
+      "${aws_sqs_queue.the_update_user_queue.arn}/*",
+    ]
+  }
+
+  statement {
+    effect  = "Allow"
+    actions = [
+      "lambda:InvokeFunction"
+    ]
+
+    resources = [
+      aws_lambda_function.the_user_options_lambda_function.arn,
+      "${aws_lambda_function.the_user_options_lambda_function.arn}/*"
     ]
   }
 }
@@ -87,7 +106,11 @@ data "aws_iam_policy_document" "the_user_options_lambda_assume_role_policy_docum
 
     principals {
       type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
+      identifiers = [
+        "lambda.amazonaws.com",
+        "apigateway.amazonaws.com"
+
+      ]
     }
   }
 }

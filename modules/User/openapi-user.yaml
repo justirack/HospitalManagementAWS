@@ -17,6 +17,16 @@ paths:
         httpMethod: POST
         uri: ${user_validation_lambda_invoke_arn}
         credentials: ${user_validation_lambda_invoke_role_arn}
+    options:
+      description: ${options_description}
+      responses:
+        "200":
+          description: "Request is allowed."
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri: ${user_options_lambda_invoke_arn}
+        credentials: ${user_options_lambda_invoke_role_arn}
   ${retrieve_path}:
     get:
       description: ${retrieve_description}
@@ -50,14 +60,3 @@ paths:
         httpMethod: POST
         uri: ${user_validation_lambda_invoke_arn}
         credentials: ${user_validation_lambda_invoke_role_arn}
-  ${options_path}:
-    options:
-      description: ${options_description}
-      responses:
-        "200":
-          description: "Request is allowed."
-      x-amazon-apigateway-integration:
-        type: "aws_proxy"
-        httpMethod: POST
-        uri: ${user_options_lambda_invoke_arn}
-        credentials: ${user_options_lambda_invoke_role_arn}
