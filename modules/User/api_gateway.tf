@@ -27,7 +27,7 @@ resource "aws_api_gateway_gateway_response" "the_user_rest_api_gateway_response"
   rest_api_id   = aws_api_gateway_rest_api.the_user_rest_api.id
 
   response_parameters = {
-    "gatewayresponse.header.Access-Control_Allow-Origin" = "'${local.user_api_cors_domain}'"
+    "gatewayresponse.header.Access-Control-Allow-Origin" = "'${local.user_api_cors_domain}'"
   }
 
   depends_on = [
