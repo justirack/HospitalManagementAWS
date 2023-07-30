@@ -257,7 +257,10 @@ def format_return_message(status: int, body: str) -> dict:
 
     return {
         "statusCode": status,
-        "headers": {"Content-Type": "text/html; charset=utf-8"},
+        "headers": {
+                    'Content-Type':'application/json',
+                    'Access-Control-Allow-Origin':'*',
+                    'Access-Control-Allow-Methods':'POST,PATCH,OPTIONS'},
         "body": body}
 
 
