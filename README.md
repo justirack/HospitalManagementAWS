@@ -84,3 +84,6 @@ The delete endpoint returns:
 
 
 
+
+### Infrastructure model
+![justirack_HospitalManagementAWS](https://github.com/justirack/HospitalManagementAWS/assets/173192552/c91395ef-ec8b-45eb-8c2c-9ee5197f83d7)
