@@ -40,7 +40,8 @@ def lambda_handler(event: str, context: dict) -> Union[None, list]:
         users.append({
             "first_name": user['first_name']['S'],
             "last_name": user['last_name']['S'],
-            "date_of_birth": user['date_of_birth']['S']
+            "date_of_birth": user['date_of_birth']['S'],
+            "phone_number": user['phone_number']['S']
         })
 
         __logger.info(f'Returning users: {users}')
