@@ -12,7 +12,7 @@ __logger.setLevel(logging.INFO)
 
 __base_path = '/v1/user/'
 __updatable_information = ['user_id', 'first_name', 'last_name', 'date_of_birth', 'phone_number']
-__regex = re.compile(
+__phone_regex = re.compile(
     "^(([0-9]{10})|\([0-9]{3}\)(|\s)[0-9]{3}-[0-9]{4}|[0-9]{3}-[0-9]{3}-[0-9]{4}|[0-9]{3}\s[0-9]{3}\s[0-9]{4})$")
 
 __lambda = boto3.client('lambda')
@@ -274,5 +274,5 @@ def validate_phone_number(number: str) -> None:
     :param number: The phone number to be checked .
     :return: True if the phone number is valid, raise a ValueError if it is not.
     """
-    if not __regex.match(number):
+    if not __phone_regex.match(number):
         raise ValueError(f'The phone number entered is not in a valid format.')
