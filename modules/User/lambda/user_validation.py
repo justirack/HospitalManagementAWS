@@ -171,7 +171,10 @@ def update_user(event: dict) -> dict:
         keys = body.keys()
         __logger.info(f'Keys: {keys}')
 
+        # Make sure a user ID is provided to know which entry to upate
         dict_contains_item(body, 'user_id')
+
+        # Make sure only valid fields are trying to be updated
         if body is None or not set(keys).issubset(set(__updatable_information)):
             raise AssertionError(f'The contents of the request are invalid')
 
