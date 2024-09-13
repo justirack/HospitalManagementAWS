@@ -155,6 +155,11 @@ def update_user(event: dict) -> dict:
     :param event: The event that the lambda function was invoked with, containing.
     :return: JSON containing a status code, and a string message.
     """
+
+    "::TODO::"
+    "Passing an ID that is now present in the table will create a new entry"
+    "Validate that the ID exists before trying to update"
+
     __logger.info(f'Invoked by the update endpoint. Validating request.')
     body: dict = dict()
     if event['body'] is not None:

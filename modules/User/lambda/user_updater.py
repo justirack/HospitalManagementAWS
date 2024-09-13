@@ -23,6 +23,7 @@ def lambda_handler(event: dict, context: dict) -> dict:
     expression: str = 'SET'
     values: dict = dict()
 
+    # Parse the keys that are trying to be updated into a dict
     for key in keys:
         if key != 'user_id':
             expression += f' {key}=:{key},'
