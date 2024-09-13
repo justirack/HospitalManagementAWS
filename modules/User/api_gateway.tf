@@ -27,7 +27,7 @@ resource "aws_api_gateway_gateway_response" "the_user_rest_api_gateway_response"
   rest_api_id   = aws_api_gateway_rest_api.the_user_rest_api.id
 
   response_parameters = {
-    "gatewayresponse.header.Access-Control_Allow-Origin" = "'${local.user_api_cors_domain}'"
+    "gatewayresponse.header.Access-Control-Allow-Origin" = "'${local.user_api_cors_domain}'"
   }
 
   depends_on = [
@@ -79,8 +79,18 @@ data "template_file" "the_user_open_api_specification_file" {
     delete_path        = local.user_api_delete_path
     delete_description = local.user_api_delete_description
 
+    # Options endpoint variables
+    options_path        = local.user_api_options_path
+    options_description = local.user_api_options_description
+
+    # Validation lambda information
     user_validation_lambda_invoke_arn      = aws_lambda_function.the_user_validation_lambda_function.invoke_arn
     user_validation_lambda_invoke_role_arn = aws_iam_role.the_user_validation_lambda_role.arn
+
+    # Options lambda information
+    user_options_lambda_invoke_arn      = aws_lambda_function.the_user_options_lambda_function.invoke_arn
+    user_options_lambda_invoke_role_arn = aws_iam_role.the_user_options_lambda_role.arn
+
   }
 }
 
@@ -91,26 +101,31 @@ locals {
   user_api_cors_domain   = "*"
 
   # General api variables
-  user_api_title       = "user"
-  user_api_description = "The REST API that supports CRUD operations on users in this application"
-  user_api_version     = "1.0"
-  user_api_invoke_url  = "https://${local.user_api_title}"
+  user_api_title        = "user"
+  user_api_description  = "The REST API that supports CRUD operations on users in this application"
+  user_api_version      = "1.0"
+  user_api_path_version = "v1"
+  user_api_invoke_url   = "https://${local.user_api_title}"
 
   # Add endpoint variables
-  user_api_add_path        = "v1/${local.user_api_title}/add"
+  user_api_add_path        = "${local.user_api_path_version}/${local.user_api_title}/add"
   user_api_add_description = "The endpoint that adds a user to the database."
 
   # retrieve endpoint variables
-  user_api_retrieve_path        = "v1/${local.user_api_title}/get"
+  user_api_retrieve_path        = "${local.user_api_path_version}/${local.user_api_title}/get"
   user_api_retrieve_description = "The endpoint that gets a user from the database"
 
   # Update endpoint variables
-  user_api_update_path        = "v1/${local.user_api_title}/update"
+  user_api_update_path        = "${local.user_api_path_version}/${local.user_api_title}/update"
   user_api_update_description = "The endpoint that updates an existing users information."
 
   # Delete endpoint variables
-  user_api_delete_path        = "v1/${local.user_api_title}/delete"
+  user_api_delete_path        = "${local.user_api_path_version}/${local.user_api_title}/delete"
   user_api_delete_description = "The endpoint that deletes a users information"
+
+  # Options endpoint variables
+  user_api_options_path        = "${local.user_api_path_version}/${local.user_api_title}/options"
+  user_api_options_description = "An options endpoint for the user API"
 
   gateway_responses = [
     "ACCESS_DENIED",
