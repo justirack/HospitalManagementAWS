@@ -12,7 +12,8 @@ __logger.setLevel(logging.INFO)
 
 __base_path = '/v1/user/'
 __updatable_information = ['user_id', 'first_name', 'last_name', 'date_of_birth', 'phone_number']
-__regex = re.compile("^(([0-9]{10})|\([0-9]{3}\)(|\s)[0-9]{3}-[0-9]{4}|[0-9]{3}-[0-9]{3}-[0-9]{4}|[0-9]{3}\s[0-9]{3}\s[0-9]{4})$")
+__regex = re.compile(
+    "^(([0-9]{10})|\([0-9]{3}\)(|\s)[0-9]{3}-[0-9]{4}|[0-9]{3}-[0-9]{3}-[0-9]{4}|[0-9]{3}\s[0-9]{3}\s[0-9]{4})$")
 
 __lambda = boto3.client('lambda')
 __user_retrieval_lambda_arn = os.getenv('RETRIEVE_USER_LAMBDA_INVOKE_URL')
@@ -102,7 +103,9 @@ def add_user(event: dict) -> dict:
         user_id: str = response_body["body"]["user_id"]
 
         __logger.info(f'User was successfully added to the database. Their user ID is: {user_id}')
-        return format_return_message(200, f'User was successfully added to the database. Their user ID is: {user_id}')
+        # return format_return_message(200, f'User was successfully added to the database. Their user ID is: {user_id}')
+        return format_return_message(200, json.dumps({"message": "User was successfully added to the database",
+                                                      "id": user_id}))
     # If the response code was not 200 something went wrong in the other lambda function,
     # return an error message to the user
     else:
@@ -216,7 +219,7 @@ def delete_user(event: dict) -> dict:
         return format_return_message(response_body['statusCode'], response_body['body'])
 
 
-def invoke_lambda(func_name:str, invocation_type:str, payload:Union[dict, str]) -> dict:
+def invoke_lambda(func_name: str, invocation_type: str, payload: Union[dict, str]) -> dict:
     """
     Invokes another lambda function using boto3.
 
@@ -246,7 +249,7 @@ def dict_contains_item(check_dict: dict, item: str):
         raise AssertionError(f'The request must contain {item} in order to be processed successfully.')
 
 
-def format_return_message(status: int, body: str) -> dict:
+def format_return_message(status: int, body: Union[dict, str]) -> dict:
     """
     Formats a return json for the lambda function.
 
@@ -258,9 +261,9 @@ def format_return_message(status: int, body: str) -> dict:
     return {
         "statusCode": status,
         "headers": {
-                    'Content-Type':'application/json',
-                    'Access-Control-Allow-Origin':'*',
-                    'Access-Control-Allow-Methods':'POST,PATCH,OPTIONS'},
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST,PATCH,OPTIONS'},
         "body": body}
 
 
