@@ -14,7 +14,7 @@ resource "aws_lambda_function" "the_patient_retrieval_lambda_function" {
 
   environment {
     variables = {
-      patient_TABLE_NAME = aws_dynamodb_table.the_patient_table.name
+      PATIENT_TABLE_NAME = aws_dynamodb_table.the_patient_table.name
     }
   }
 

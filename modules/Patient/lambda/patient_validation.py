@@ -16,10 +16,10 @@ __phone_regex = re.compile(
     "^(([0-9]{10})|\([0-9]{3}\)(|\s)[0-9]{3}-[0-9]{4}|[0-9]{3}-[0-9]{3}-[0-9]{4}|[0-9]{3}\s[0-9]{3}\s[0-9]{4})$")
 
 __lambda = boto3.client('lambda')
-__patient_retrieval_lambda_arn = os.getenv('RETRIEVE_patient_LAMBDA_INVOKE_URL')
-__patient_creation_lambda_arn = os.getenv('CREATE_patient_LAMBDA_INVOKE_URL')
-__patient_update_lambda_arn = os.getenv('UPDATE_patient_LAMBDA_INVOKE_URL')
-__patient_deletion_lambda_arn = os.getenv('DELETE_patient_LAMBDA_INVOKE_URL')
+__patient_retrieval_lambda_arn = os.getenv('RETRIEVE_PATIENT_LAMBDA_INVOKE_URL')
+__patient_creation_lambda_arn = os.getenv('CREATE_PATIENT_INVOKE_URL')
+__patient_update_lambda_arn = os.getenv('UPDATE_PATIENT_LAMBDA_INVOKE_URL')
+__patient_deletion_lambda_arn = os.getenv('DELETE_PATIENT_LAMBDA_INVOKE_URL')
 
 __REQUEST_RESPONSE_INVOCATION_TYPE = 'RequestResponse'
 

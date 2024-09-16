@@ -14,12 +14,12 @@ resource "aws_lambda_function" "the_patient_validation_lambda_function" {
 
   environment {
     variables = {
-      CREATE_patient_QUEUE_URL           = aws_sqs_queue.the_create_patient_queue.url
-      UPDATE_patient_QUEUE_URL           = aws_sqs_queue.the_update_patient_queue.url
-      RETRIEVE_patient_LAMBDA_INVOKE_URL = aws_lambda_function.the_patient_retrieval_lambda_function.arn
-      CREATE_patient_LAMBDA_INVOKE_URL   = aws_lambda_function.the_patient_creation_lambda_function.arn
-      UPDATE_patient_LAMBDA_INVOKE_URL   = aws_lambda_function.the_patient_updater_lambda_function.arn
-      DELETE_patient_LAMBDA_INVOKE_URL   = aws_lambda_function.the_patient_deletion_lambda_function.arn
+      CREATE_PATIENT_QUEUE_URL           = aws_sqs_queue.the_create_patient_queue.url
+      UPDATE_PATIENT_QUEUE_URL           = aws_sqs_queue.the_update_patient_queue.url
+      RETRIEVE_PATIENT_LAMBDA_INVOKE_URL = aws_lambda_function.the_patient_retrieval_lambda_function.arn
+      CREATE_PATIENT_LAMBDA_INVOKE_URL   = aws_lambda_function.the_patient_creation_lambda_function.arn
+      UPDATE_PATIENT_LAMBDA_INVOKE_URL   = aws_lambda_function.the_patient_updater_lambda_function.arn
+      DELETE_PATIENT_LAMBDA_INVOKE_URL   = aws_lambda_function.the_patient_deletion_lambda_function.arn
     }
   }
 

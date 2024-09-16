@@ -4,7 +4,7 @@ import logging
 
 from typing import Union
 
-__dynamodb_table_name = os.getenv('patient_TABLE_NAME')
+__dynamodb_table_name = os.getenv('PATIENT_TABLE_NAME')
 __dynamodb = boto3.client('dynamodb')
 
 __logger = logging.getLogger()
