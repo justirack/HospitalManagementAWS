@@ -12,6 +12,7 @@ __logger.setLevel(logging.INFO)
 
 __base_path = '/v1/user/'
 __updatable_information = ['user_id', 'first_name', 'last_name', 'date_of_birth', 'phone_number']
+__valid_user_types= ['patient', 'doctor']
 __phone_regex = re.compile(
     "^(([0-9]{10})|\([0-9]{3}\)(|\s)[0-9]{3}-[0-9]{4}|[0-9]{3}-[0-9]{3}-[0-9]{4}|[0-9]{3}\s[0-9]{3}\s[0-9]{4})$")
 
@@ -76,6 +77,9 @@ def add_user(event: dict) -> dict:
         dict_contains_item(body, 'date_of_birth')
         dict_contains_item(body, 'phone_number')
         dict_contains_item(body, 'user_type')
+
+        # TODO fix logging for below line when patient or doctor is not passed
+        dict_contains_item(__valid_user_types, body['user_type'])
 
         validate_phone_number(body['phone_number'])
         datetime.date.fromisoformat(body['date_of_birth'])
