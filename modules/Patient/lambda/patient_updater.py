@@ -6,7 +6,7 @@ import logging
 __logger = logging.getLogger()
 __logger.setLevel(logging.INFO)
 
-__dynamodb_table_name = os.getenv('USER_TABLE_NAME')
+__dynamodb_table_name = os.getenv('patient_TABLE_NAME')
 __dynamodb = boto3.client('dynamodb')
 
 
@@ -14,7 +14,7 @@ def lambda_handler(event: dict, context: dict) -> dict:
     """
     The event handler/entrypoint for this lambda.
 
-    The lambda will update a user in the DynamoDB database.
+    The lambda will update a patient in the DynamoDB database.
     """
     __logger.info(f'Lambda was invoked with event: {event}')
     body: dict = json.loads(json.dumps(event))
@@ -25,7 +25,7 @@ def lambda_handler(event: dict, context: dict) -> dict:
 
     # Parse the keys that are trying to be updated into a dict
     for key in keys:
-        if key != 'user_id':
+        if key != 'patient_id':
             expression += f' {key}=:{key},'
             values.update({
                 f':{key}': {'S': body[key]}
@@ -38,21 +38,21 @@ def lambda_handler(event: dict, context: dict) -> dict:
 
     response: dict = __dynamodb.update_item(
         TableName=__dynamodb_table_name,
-        Key={'user_id': {'S': event['user_id']}},
+        Key={'patient_id': {'S': event['patient_id']}},
         UpdateExpression=expression,
         ExpressionAttributeValues=values
     )
     __logger.info(f'Received response: {response}')
 
     if response['ResponseMetadata']['HTTPStatusCode'] == 200:
-        __logger.info(f'User information was successfully updated in the database.')
+        __logger.info(f'patient information was successfully updated in the database.')
         return {
             "statusCode": 200,
             "headers": {"Content-Type": "text/html; charset=utf-8"},
             "body": "Success"
         }
     # If the response code is not 200 something went wrong with DynamoDB.
-    # Return an error message to the user
+    # Return an error message to the patient
     else:
         __logger.error(
             f"Something went wrong updating the patient. Received status: {response['ResponseMetadata']['HTTPStatusCode']}.")

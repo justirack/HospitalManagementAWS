@@ -4,7 +4,7 @@ import logging
 
 from typing import Union
 
-__dynamodb_table_name = os.getenv('USER_TABLE_NAME')
+__dynamodb_table_name = os.getenv('patient_TABLE_NAME')
 __dynamodb = boto3.client('dynamodb')
 
 __logger = logging.getLogger()
@@ -15,34 +15,34 @@ def lambda_handler(event: str, context: dict) -> Union[None, list]:
     """
     The event handler/entrypoint for this lambda.
 
-    The lambda will retrieve a user from the DynamoDB database.
+    The lambda will retrieve a patient from the DynamoDB database.
     """
     __logger.info(f'Lambda was invoked with the event: {event}')
-    user_id: str = event
+    patient_id: str = event
 
     response: dict = __dynamodb.query(
         TableName=__dynamodb_table_name,
-        KeyConditionExpression='user_id = :user_id',
+        KeyConditionExpression='patient_id = :patient_id',
         ExpressionAttributeValues={
-            ':user_id': {'S': user_id}
+            ':patient_id': {'S': patient_id}
         }
     )
     __logger.info(f'Received response: {response}')
 
-    # If no users with the id are found, return None
+    # If no patients with the id are found, return None
     if response['Count'] == 0:
-        __logger.info(f'Did not find any users, returning None.')
+        __logger.info(f'Did not find any patients, returning None.')
         return None
 
-    # Add all users to a list to return them
-    users: list = list()
-    for user in response['Items']:
-        users.append({
-            "first_name": user['first_name']['S'],
-            "last_name": user['last_name']['S'],
-            "date_of_birth": user['date_of_birth']['S'],
-            "phone_number": user['phone_number']['S']
+    # Add all patients to a list to return them
+    patients: list = list()
+    for patient in response['Items']:
+        patients.append({
+            "first_name": patient['first_name']['S'],
+            "last_name": patient['last_name']['S'],
+            "date_of_birth": patient['date_of_birth']['S'],
+            "phone_number": patient['phone_number']['S']
         })
 
-        __logger.info(f'Returning users: {users}')
-        return users
+        __logger.info(f'Returning patients: {patients}')
+        return patients
