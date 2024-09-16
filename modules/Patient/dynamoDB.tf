@@ -1,17 +1,17 @@
 # -----------------------------------------------
 # Module Resources
-resource "aws_dynamodb_table" "the_user_table" {
-  name = local.user_table_name
+resource "aws_dynamodb_table" "the_patient_table" {
+  name = local.patient_table_name
   stream_enabled = true
   stream_view_type = "NEW_AND_OLD_IMAGES"
   billing_mode = "PAY_PER_REQUEST"
 
-  hash_key = "user_id"
+  hash_key = "patient_id"
 #  range_key = "sort_key"
 
   # Defines the partition key as a string
   attribute {
-    name = "user_id"
+    name = "patient_id"
     type = "S"
   }
 
@@ -20,14 +20,14 @@ resource "aws_dynamodb_table" "the_user_table" {
   }
 }
 
-resource "aws_iam_policy" "the_user_table_policy" {
-  name_prefix = "users-table-policy"
-  policy = data.aws_iam_policy_document.the_user_table_policy_document.json
+resource "aws_iam_policy" "the_patient_table_policy" {
+  name_prefix = "patients-table-policy"
+  policy = data.aws_iam_policy_document.the_patient_table_policy_document.json
 }
 
 # -----------------------------------------------
 # Module Data
-data "aws_iam_policy_document" "the_user_table_policy_document" {
+data "aws_iam_policy_document" "the_patient_table_policy_document" {
   version = "2012-10-17"
 
   statement {
@@ -43,5 +43,5 @@ data "aws_iam_policy_document" "the_user_table_policy_document" {
 # -----------------------------------------------
 # Module Locals
 locals {
-  user_table_name = "users"
+  patient_table_name = "patients"
 }

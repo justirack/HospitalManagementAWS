@@ -11,12 +11,12 @@ paths:
       description: ${add_description}
       responses:
         "200":
-          description: "The user was successfully added to the table."
+          description: "The patient was successfully added to the table."
       x-amazon-apigateway-integration:
         type: "aws_proxy"
         httpMethod: POST
-        uri: ${user_validation_lambda_invoke_arn}
-        credentials: ${user_validation_lambda_invoke_role_arn}
+        uri: ${patient_validation_lambda_invoke_arn}
+        credentials: ${patient_validation_lambda_invoke_role_arn}
     options:
       description: ${options_description}
       responses:
@@ -25,38 +25,38 @@ paths:
       x-amazon-apigateway-integration:
         type: "aws_proxy"
         httpMethod: POST
-        uri: ${user_options_lambda_invoke_arn}
-        credentials: ${user_options_lambda_invoke_role_arn}
+        uri: ${patient_options_lambda_invoke_arn}
+        credentials: ${patient_options_lambda_invoke_role_arn}
   ${retrieve_path}:
     get:
       description: ${retrieve_description}
       responses:
         '200':
-          description: "The user was retrieved."
+          description: "The patient was retrieved."
       x-amazon-apigateway-integration:
         type: "aws_proxy"
         httpMethod: POST
-        uri: ${user_validation_lambda_invoke_arn}
-        credentials: ${user_validation_lambda_invoke_role_arn}
+        uri: ${patient_validation_lambda_invoke_arn}
+        credentials: ${patient_validation_lambda_invoke_role_arn}
   ${update_path}:
     put:
       description: ${update_description}
       responses:
         "200":
-          description: "The user was successfully updated to the table."
+          description: "The patient was successfully updated to the table."
       x-amazon-apigateway-integration:
         type: "aws_proxy"
         httpMethod: POST
-        uri: ${user_validation_lambda_invoke_arn}
-        credentials: ${user_validation_lambda_invoke_role_arn}
+        uri: ${patient_validation_lambda_invoke_arn}
+        credentials: ${patient_validation_lambda_invoke_role_arn}
   ${delete_path}:
     delete:
       description: ${update_description}
       responses:
         "200":
-          description: "The user was successfully updated to the table."
+          description: "The patient was successfully updated to the table."
       x-amazon-apigateway-integration:
         type: "aws_proxy"
         httpMethod: POST
-        uri: ${user_validation_lambda_invoke_arn}
-        credentials: ${user_validation_lambda_invoke_role_arn}
+        uri: ${patient_validation_lambda_invoke_arn}
+        credentials: ${patient_validation_lambda_invoke_role_arn}

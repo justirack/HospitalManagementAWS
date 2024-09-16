@@ -1,4 +1,4 @@
-variable "user-prefix" {
+variable "patient-prefix" {
   type = string
 }
 
