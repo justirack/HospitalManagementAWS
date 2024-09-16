@@ -18,7 +18,7 @@ provider "aws" {
 # --------------------------------------------------
 # :: Module calls
 module "user_module" {
-  source = "./modules/User"
+  source = "modules/Patient"
 
   # Variables
   user-prefix = "user-"
