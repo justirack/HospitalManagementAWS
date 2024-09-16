@@ -26,7 +26,7 @@ Sample JSON:
  "last_name": "Rackley",
  "date_of_birth": "2002-02-09",
  "phone_number": "(123)456-7890",
- "user_type": "patient"
+ "user_type": "patient|doctor"
 }
 ```
 The endpoint returns:
