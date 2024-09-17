@@ -196,6 +196,7 @@ def update_user(event: dict) -> dict:
     return format_return_message(response_body['statusCode'], response_body['body'])
 
 
+# TODO should this use a query parameter instead of event body for the id????
 def delete_user(event: dict) -> dict:
     """
     Validates a request to the delete endpoint, then deletes a users' information from the database.
