@@ -130,5 +130,5 @@ data "archive_file" "the_user_validation_lambda_zip" {
 locals {
   user_validation_lambda_name                 = "user_validation"
   user_validation_lambda_function_source_path = "${path.module}/lambda/${local.user_validation_lambda_name}.py"
-  user_validation_lambda_function_output_path = "${path.module}/lambda/${local.user_validation_lambda_name}.zip"
+  user_validation_lambda_function_output_path = "${path.module}/lambda/archive/${local.user_validation_lambda_name}.zip"
 }

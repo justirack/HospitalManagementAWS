@@ -107,5 +107,5 @@ data "archive_file" "the_user_creation_lambda_zip" {
 locals {
   user_creation_lambda_name                 = "user_creation"
   user_creation_lambda_function_source_path = "${path.module}/lambda/${local.user_creation_lambda_name}.py"
-  user_creation_lambda_function_output_path = "${path.module}/lambda/${local.user_creation_lambda_name}.zip"
+  user_creation_lambda_function_output_path = "${path.module}/lambda/archive/${local.user_creation_lambda_name}.zip"
 }

@@ -134,5 +134,5 @@ data "archive_file" "the_user_updater_lambda_zip" {
 locals {
   user_updater_lambda_name                 = "user_updater"
   user_updater_lambda_function_source_path = "${path.module}/lambda/${local.user_updater_lambda_name}.py"
-  user_updater_lambda_function_output_path = "${path.module}/lambda/${local.user_updater_lambda_name}.zip"
+  user_updater_lambda_function_output_path = "${path.module}/lambda/archive/${local.user_updater_lambda_name}.zip"
 }

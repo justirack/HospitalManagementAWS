@@ -95,5 +95,5 @@ data "archive_file" "the_user_deletion_lambda_zip" {
 locals {
   user_deletion_lambda_name                 = "user_deletion"
   user_deletion_lambda_function_source_path = "${path.module}/lambda/${local.user_deletion_lambda_name}.py"
-  user_deletion_lambda_function_output_path = "${path.module}/lambda/${local.user_deletion_lambda_name}.zip"
+  user_deletion_lambda_function_output_path = "${path.module}/lambda/archive/${local.user_deletion_lambda_name}.zip"
 }

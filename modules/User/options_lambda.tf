@@ -130,5 +130,5 @@ data "archive_file" "the_user_options_lambda_zip" {
 locals {
   user_options_lambda_name                 = "user_options"
   user_options_lambda_function_source_path = "${path.module}/lambda/${local.user_options_lambda_name}.py"
-  user_options_lambda_function_output_path = "${path.module}/lambda/${local.user_options_lambda_name}.zip"
+  user_options_lambda_function_output_path = "${path.module}/lambda/archive/${local.user_options_lambda_name}.zip"
 }

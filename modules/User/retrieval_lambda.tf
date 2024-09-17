@@ -95,5 +95,5 @@ data "archive_file" "the_user_retrieval_lambda_zip" {
 locals {
   user_retrieval_lambda_name                 = "user_retrieval"
   user_retrieval_lambda_function_source_path = "${path.module}/lambda/${local.user_retrieval_lambda_name}.py"
-  user_retrieval_lambda_function_output_path = "${path.module}/lambda/${local.user_retrieval_lambda_name}.zip"
+  user_retrieval_lambda_function_output_path = "${path.module}/lambda/archive/${local.user_retrieval_lambda_name}.zip"
 }
