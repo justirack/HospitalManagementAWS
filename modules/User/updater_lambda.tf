@@ -46,13 +46,6 @@ resource "aws_iam_role_policy_attachment" "the_user_updater_lambda_execution_rol
   role       = aws_iam_role.the_user_updater_lambda_role.name
 }
 
-resource "aws_lambda_event_source_mapping" "user_updater" {
-  event_source_arn                   = aws_sqs_queue.the_update_user_queue.arn
-  function_name                      = aws_lambda_function.the_user_updater_lambda_function.function_name
-  batch_size                         = 10000
-  maximum_batching_window_in_seconds = 10
-}
-
 # -----------------------------------------------
 # Module Data
 
@@ -81,22 +74,6 @@ data "aws_iam_policy_document" "the_user_updater_lambda_execution_policy_documen
     resources = [
       aws_dynamodb_table.the_user_table.arn,
       "${aws_dynamodb_table.the_user_table.arn}/*"
-    ]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "sqs:GetQueueAttributes",
-      "sqs:SendMessage",
-      "sqs:DeleteMessage",
-      "sqs:ReceiveMessage"
-    ]
-
-    resources = [
-      aws_sqs_queue.the_update_user_queue.arn,
-      "${aws_sqs_queue.the_update_user_queue.arn}/*",
     ]
   }
 }
