@@ -50,3 +50,48 @@ paths:
         httpMethod: POST
         uri: ${user_validation_lambda_invoke_arn}
         credentials: ${user_validation_lambda_invoke_role_arn}
+  ${book_appointment_path}:
+    post:
+      description: ${book_appointment_description}
+      responses:
+        "200":
+          description: "The appointment was successfully booked"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri: ${appointment_validation_lambda_invoke_arn}
+        credentials: ${appointment_validation_lambda_invoke_role_arn}
+  ${retrieve_appointment_path}:
+    get:
+      description: ${retrieve_appointment_description}
+      responses:
+        '200':
+          description: "the Appointments were successfully retrieved"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri: ${appointment_validation_lambda_invoke_arn}
+        credentials: ${appointment_validation_lambda_invoke_role_arn}
+  ${update_appointment_path}:
+    put:
+      description: ${update_appointment_description}
+      responses:
+        "200":
+          description: "The appointment was successfully updated"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri: ${appointment_validation_lambda_invoke_arn}
+        credentials: ${appointment_validation_lambda_invoke_role_arn}
+  ${cancel_appointment_path}:
+    delete:
+      description: ${cancel_appointment_description}
+      responses:
+        "200":
+          description: "The appointment was successfully deleted"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        httpMethod: POST
+        uri: ${appointment_validation_lambda_invoke_arn}
+        credentials: ${appointment_validation_lambda_invoke_role_arn}
+
