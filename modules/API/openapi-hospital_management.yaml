@@ -6,9 +6,9 @@ info:
 servers:
   - url: ${invoke_url}
 paths:
-  ${add_path}:
+  ${add_user_path}:
     post:
-      description: ${add_description}
+      description: ${add_user_description}
       responses:
         "200":
           description: "The user was successfully added to the table."
@@ -17,19 +17,9 @@ paths:
         httpMethod: POST
         uri: ${user_validation_lambda_invoke_arn}
         credentials: ${user_validation_lambda_invoke_role_arn}
-    options:
-      description: ${options_description}
-      responses:
-        "200":
-          description: "Request is allowed."
-      x-amazon-apigateway-integration:
-        type: "aws_proxy"
-        httpMethod: POST
-        uri: ${user_options_lambda_invoke_arn}
-        credentials: ${user_options_lambda_invoke_role_arn}
-  ${retrieve_path}:
+  ${retrieve_user_path}:
     get:
-      description: ${retrieve_description}
+      description: ${retrieve_user_description}
       responses:
         '200':
           description: "The user was retrieved."
@@ -38,9 +28,9 @@ paths:
         httpMethod: POST
         uri: ${user_validation_lambda_invoke_arn}
         credentials: ${user_validation_lambda_invoke_role_arn}
-  ${update_path}:
+  ${update_user_path}:
     put:
-      description: ${update_description}
+      description: ${update_user_description}
       responses:
         "200":
           description: "The user was successfully updated to the table."
@@ -49,9 +39,9 @@ paths:
         httpMethod: POST
         uri: ${user_validation_lambda_invoke_arn}
         credentials: ${user_validation_lambda_invoke_role_arn}
-  ${delete_path}:
+  ${delete_user_path}:
     delete:
-      description: ${update_description}
+      description: ${delete_user_description}
       responses:
         "200":
           description: "The user was successfully updated to the table."

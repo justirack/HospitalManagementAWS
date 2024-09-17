@@ -1,7 +1,7 @@
 # -----------------------------------------------
 # Module Resources
 resource "aws_api_gateway_rest_api" "the_user_rest_api" {
-  name = local.user_api_title
+  name = local.user_api_path
   body = data.template_file.the_user_open_api_specification_file.rendered
 }
 
@@ -9,7 +9,7 @@ resource "aws_api_gateway_deployment" "the_user_rest_api_deployment" {
   rest_api_id = aws_api_gateway_rest_api.the_user_rest_api.id
 
   variables = {
-    version = local.user_api_version
+    version = local.api_version
   }
 
   triggers = {
@@ -22,7 +22,7 @@ resource "aws_api_gateway_deployment" "the_user_rest_api_deployment" {
 }
 
 resource "aws_api_gateway_gateway_response" "the_user_rest_api_gateway_response" {
-  count         = length(local.gateway_responses)
+  count = length(local.gateway_responses)
   response_type = local.gateway_responses[count.index]
   rest_api_id   = aws_api_gateway_rest_api.the_user_rest_api.id
 
@@ -43,7 +43,7 @@ resource "aws_api_gateway_gateway_response" "the_user_rest_api_gateway_response"
 resource "aws_api_gateway_stage" "the_user_rest_api_stage" {
   deployment_id = aws_api_gateway_deployment.the_user_rest_api_deployment.id
   rest_api_id   = aws_api_gateway_rest_api.the_user_rest_api.id
-  stage_name    = local.user_api_title
+  stage_name    = local.user_api_path
 
   depends_on = [
     aws_api_gateway_rest_api.the_user_rest_api,
@@ -58,74 +58,70 @@ data "template_file" "the_user_open_api_specification_file" {
   template = file("${path.module}/${local.user_open_api_yml_file}")
 
   vars = {
-    title       = local.user_api_title
-    description = local.user_api_description
-    version     = local.user_api_version
-    invoke_url  = local.user_api_invoke_url
+    title       = local.user_api_path
+    description = local.api_description
+    version     = local.api_version
+    invoke_url = local.api_invoke_url
 
     # Add endpoint variables
-    add_path        = local.user_api_add_path
-    add_description = local.user_api_add_description
+    add_user_path = local.add_user_path
+    add_user_description = local.add_user_description
 
     # retrieve endpoint variables
-    retrieve_path        = local.user_api_retrieve_path
-    retrieve_description = local.user_api_retrieve_description
+    retrieve_user_path = local.retrieve_user_path
+    retrieve_user_description = local.retrieve_user_description
 
     # Update endpoint variables
-    update_path        = local.user_api_update_path
-    update_description = local.user_api_update_description
+    update_user_path = local.update_user_path
+    update_user_description = local.update_user_description
 
     # Delete endpoint variables
-    delete_path        = local.user_api_delete_path
-    delete_description = local.user_api_delete_description
+    delete_user_path = local.delete_user_path
+    delete_user_description = local.delete_user_description
 
     # Options endpoint variables
-    options_path        = local.user_api_options_path
-    options_description = local.user_api_options_description
+    options_user_path = local.options_user_path
+    options_user_description = local.options_user_description
 
     # Validation lambda information
-    user_validation_lambda_invoke_arn      = aws_lambda_function.the_user_validation_lambda_function.invoke_arn
-    user_validation_lambda_invoke_role_arn = aws_iam_role.the_user_validation_lambda_role.arn
-
-    # Options lambda information
-    user_options_lambda_invoke_arn      = aws_lambda_function.the_user_options_lambda_function.invoke_arn
-    user_options_lambda_invoke_role_arn = aws_iam_role.the_user_options_lambda_role.arn
-
+    user_validation_lambda_invoke_arn      = var.user_validation_lambda_function_invoke_arn
+    user_validation_lambda_invoke_role_arn = var.user_validation_lambda_role_arn
   }
 }
 
 # -----------------------------------------------
 # Module Locals
 locals {
-  user_open_api_yml_file = "openapi-user.yaml"
-  user_api_cors_domain   = "*"
+  user_open_api_yml_file = "openapi-hospital_management.yaml"
+  user_api_cors_domain = "*"
 
   # General api variables
-  user_api_title        = "user"
-  user_api_description  = "The REST API that supports CRUD operations on users in this application"
-  user_api_version      = "1.0"
-  user_api_path_version = "v1"
-  user_api_invoke_url   = "https://${local.user_api_title}"
+  user_api_path        = "user"
+  appointment_api_path = "appointment"
+  api_description      = "The REST API that supports CRUD operations for this application"
+  api_version          = "1.0"
+  api_path_version     = "v1"
+  api_invoke_url = "https://${local.user_api_path}"
 
   # Add endpoint variables
-  user_api_add_path        = "${local.user_api_path_version}/${local.user_api_title}/add"
-  user_api_add_description = "The endpoint that adds a user to the database."
+  add_user_path = "${local.api_path_version}/${local.user_api_path}/add"
+  add_user_description = "The endpoint that adds a user to the database."
 
   # retrieve endpoint variables
-  user_api_retrieve_path        = "${local.user_api_path_version}/${local.user_api_title}/get"
-  user_api_retrieve_description = "The endpoint that gets a user from the database"
+  retrieve_user_path = "${local.api_path_version}/${local.user_api_path}/get"
+  retrieve_user_description = "The endpoint that gets a user from the database"
 
   # Update endpoint variables
-  user_api_update_path        = "${local.user_api_path_version}/${local.user_api_title}/update"
-  user_api_update_description = "The endpoint that updates an existing users information."
+  update_user_path = "${local.api_path_version}/${local.user_api_path}/update"
+  update_user_description = "The endpoint that updates an existing users information."
 
   # Delete endpoint variables
-  user_api_delete_path        = "${local.user_api_path_version}/${local.user_api_title}/delete"
-  user_api_delete_description = "The endpoint that deletes a users information"
+  delete_user_path = "${local.api_path_version}/${local.user_api_path}/delete"
+  delete_user_description = "The endpoint that deletes a users information"
 
   # Options endpoint variables
-  user_api_options_path        = "${local.user_api_path_version}/${local.user_api_title}/options"
-  user_api_options_description = "An options endpoint for the user API"
+  options_user_path        = "${local.api_path_version}/${local.user_api_path}/options"
+  options_user_description = "An options endpoint for the user API"
 
   gateway_responses = [
     "ACCESS_DENIED",
