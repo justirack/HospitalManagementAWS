@@ -14,8 +14,6 @@ resource "aws_lambda_function" "the_user_options_lambda_function" {
 
   environment {
     variables = {
-      CREATE_USER_QUEUE_URL           = aws_sqs_queue.the_create_user_queue.url
-      UPDATE_USER_QUEUE_URL           = aws_sqs_queue.the_update_user_queue.url
       RETRIEVE_USER_LAMBDA_INVOKE_URL = aws_lambda_function.the_user_retrieval_lambda_function.arn
       CREATE_USER_LAMBDA_INVOKE_URL   = aws_lambda_function.the_user_creation_lambda_function.arn
       UPDATE_USER_LAMBDA_INVOKE_URL   = aws_lambda_function.the_user_updater_lambda_function.arn
@@ -67,20 +65,6 @@ data "aws_iam_policy_document" "the_user_options_lambda_execution_policy_documen
     resources = [
       "arn:aws:logs:*",
       "arn:aws:lambda:*"
-    ]
-  }
-
-  statement {
-    effect  = "Allow"
-    actions = [
-      "sqs:SendMessage"
-    ]
-
-    resources = [
-      aws_sqs_queue.the_create_user_queue.arn,
-      "${aws_sqs_queue.the_create_user_queue.arn}/*",
-      aws_sqs_queue.the_update_user_queue.arn,
-      "${aws_sqs_queue.the_update_user_queue.arn}/*",
     ]
   }
 
