@@ -12,14 +12,14 @@ resource "aws_lambda_function" "the_appointment_validation_lambda_function" {
   source_code_hash = data.archive_file.the_appointment_validation_lambda_zip.output_base64sha256
   publish          = true
 
-#   environment {
-#     variables = {
-#       RETRIEVE_appointment_LAMBDA_INVOKE_URL = aws_lambda_function.the_appointment_retrieval_lambda_function.arn
-#       CREATE_appointment_LAMBDA_INVOKE_URL   = aws_lambda_function.the_appointment_creation_lambda_function.arn
-#       UPDATE_appointment_LAMBDA_INVOKE_URL   = aws_lambda_function.the_appointment_updater_lambda_function.arn
-#       DELETE_appointment_LAMBDA_INVOKE_URL   = aws_lambda_function.the_appointment_deletion_lambda_function.arn
-#     }
-#   }
+  environment {
+    variables = {
+      RETRIEVE_appointment_LAMBDA_INVOKE_URL = aws_lambda_function.the_appointment_retrieval_lambda_function.arn
+      CREATE_appointment_LAMBDA_INVOKE_URL   = aws_lambda_function.the_appointment_booking_lambda_function.arn
+      UPDATE_appointment_LAMBDA_INVOKE_URL   = aws_lambda_function.the_appointment_updater_lambda_function.arn
+      DELETE_appointment_LAMBDA_INVOKE_URL   = aws_lambda_function.the_appointment_cancellation_lambda_function.arn
+    }
+  }
 
   depends_on = [aws_cloudwatch_log_group.the_appointment_validation_lambda_cloudwatch_group]
 }
